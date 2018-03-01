@@ -1,6 +1,6 @@
 {
   "name": "mlstudy",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "description": "",
   "engines": {
     "node": "6.12.3"
@@ -18,7 +18,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "Apache",
+  "license": "Apache-2.0",
   "dependencies": {
     "express": "4.15.2"
   },
@@ -26,6 +26,5 @@
     "html-loader": "^0.5.5",
     "webpack": "^4.0.1",
     "webpack-cli": "^2.0.9"
-  },
-  "dependencies": {}
+  }
 }
