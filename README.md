@@ -2,7 +2,7 @@
 
 ## A full-stack infrastructure/ecosystem for organising reproducible analytical pipelines in the cloud 
 
-![Network Overview](img/MLStudy.png)
+![Network Overview](img/MLStudy.svg.png)
 
 ## Intro
 Mountainlab is an environment for building reproducible & customisable analytical pipelines. Ultimately it could allow researchers to use a pre-specified pipeline to go directly from their raw data to formatted figures/results with very little (human effort). An extension of Mountainlab, Mountainlab Study (MLStudy), will allow seamless sharing and re-use of mountainlab pipelines, as well as the data that accompany them.
