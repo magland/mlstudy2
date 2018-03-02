@@ -1,4 +1,5 @@
 exports.mlinfo=mlinfo;
+exports.mlalert=mlalert;
 exports.mlconfirm=mlconfirm;
 exports.mlprompt=mlprompt;
 exports.download_document_content_from_docstor=download_document_content_from_docstor;
@@ -22,6 +23,14 @@ function mlinfo(title,message,callback) {
 		message:message,
 		callback:callback
 	});
+}
+
+function mlalert(title,message,callback) {
+    bootbox.alert({
+        title:title,
+        message:message,
+        callback:callback
+    });
 }
 
 function mlconfirm(title,message,callback) {
