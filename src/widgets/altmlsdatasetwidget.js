@@ -101,6 +101,7 @@ function AltMLSDatasetWidget(O) {
 
 	function update_tables() {
 		m_files_table.setColumnCount(5);
+		m_files_table.headerRow().cell(0).css({"width":"10px"});
 		m_files_table.headerRow().cell(1).html('File');
 		m_files_table.headerRow().cell(2).html('Size');
 		m_files_table.headerRow().cell(3).html('Orig. Path');
@@ -120,6 +121,8 @@ function AltMLSDatasetWidget(O) {
 		}
 
 		m_params_table.setColumnCount(3);
+		m_params_table.headerRow().cell(0).css({"width":"10px"});
+		m_params_table.headerRow().cell(1).css({"width":"120px"});
 		m_params_table.headerRow().cell(1).html('Parameter');
 		m_params_table.headerRow().cell(2).html('Value');
 		m_params_table.clearRows();
@@ -140,13 +143,13 @@ function AltMLSDatasetWidget(O) {
 		row.cell(1).append(name);
 
 		// remove file
-		var link=$('<span class=remove_button title="Remove parameter"></span>');
+		var link=$('<span class="remove_button octicon octicon-trashcan" title="Remove parameter"></span>');
 		link.click(function() {
 			remove_parameter(name);
 		});
 		row.cell(0).append(link);
 
-		var edit_link=$('<span class=edit_button></span>');
+		var edit_link=$('<span class="edit_button octicon octicon-pencil"></span>');
 		row.cell(2).append(edit_link);
 		edit_link.click(function() {
 			edit_parameter(name);
@@ -182,7 +185,7 @@ function AltMLSDatasetWidget(O) {
 	}
 	function update_file_row(row,name,file) {
 
-		var rename_file_link=$('<span class=edit_button></span>');
+		var rename_file_link=$('<span class="edit_button  octicon octicon-pencil"></span>');
 		rename_file_link.click(function() {
 			rename_file(name);
 		});
@@ -191,7 +194,7 @@ function AltMLSDatasetWidget(O) {
 
 
 		// remove file
-		var link=$('<span class=remove_button title="Remove file"></span>');
+		var link=$('<span class="remove_button octicon octicon-trashcan" title="Remove file"></span>');
 		link.click(function() {
 			remove_file(name);
 		});

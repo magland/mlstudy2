@@ -15,6 +15,7 @@ var AltMLSBatchScriptResultsWidget=require('./altmlsbatchscriptresultswidget.js'
 var MLSBatchScriptJobsWidget=require('./mlsbatchscriptjobswidget.js').MLSBatchScriptJobsWidget;
 var MLPLogWidget=require('./mlplogwidget.js').MLPLogWidget;
 var mlutils=require('../mlscore/mlutils.js');
+var jsutils=require('../mlscore/jsutils/jsutils.js');
 
 require('./altmlsmainwindow.css');
 require('./bootstrap_docs.css');
@@ -316,7 +317,7 @@ function AltMLSMainWindow(O) {
 		var user=m_mls_manager.user()||m_file_info.owner;
 		mlutils.mlprompt('Save study as',`Enter title of study (owner will be ${user}):`,m_file_info.title,function(title) {
 			if (!title) return;
-			if (!jsu_ends_with(title,'.mls')) {
+			if (!jsutils.ends_with(title,'.mls')) {
 				title+='.mls';
 			}
 			var m_old_file_info=m_file_info;

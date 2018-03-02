@@ -5,6 +5,7 @@ exports.AdvancedConfigurationWidget=AdvancedConfigurationWidget;
 var JSQWidget=require('../mlscore/jsqcore/jsqwidget.js').JSQWidget;
 var MLTableWidget=require('./mltablewidget.js').MLTableWidget;
 var mlutils=require('../mlscore/mlutils.js');
+var jsutils=require('../mlscore/jsutils/jsutils.js');
 
 require('./altmlsoverviewwindow.css');
 
@@ -357,7 +358,7 @@ function StudyListWidget(O) {
 				return;
 			}
 			var fname=tmp.file_name;
-			if (!jsu_ends_with(fname,'.mls'))
+			if (!jsutils.ends_with(fname,'.mls'))
 				fname+='.mls';
 			var opts={
 				owner:m_login_info.user_id,
@@ -377,7 +378,7 @@ function StudyListWidget(O) {
 
 	function create_new_study() {
 		mlutils.mlprompt('Create new study','Enter title of new study:','untitled.mls',function(title0) {
-			if (!jsu_ends_with(title0,'.mls')) {
+			if (!jsutils.ends_with(title0,'.mls')) {
 				title0+='.mls';
 			}
 			if (m_mode=='my_studies') {
@@ -540,7 +541,7 @@ function StudyListWidget(O) {
 		row.cell(0).append(elmt);
 		row.cell(1).html(study0.owner);
 
-		var share_elmt=$('<span><span class=edit_button></span> <span id=users></span></span>');
+		var share_elmt=$('<span><span class="edit_button octicon octicon-pencil"></span> <span id=users></span></span>');
 		share_elmt.find('#users').html(study0.shared_with.join(', '));
 		share_elmt.find('.edit_button').click(function() {
 			edit_sharing(study0);

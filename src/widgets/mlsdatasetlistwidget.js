@@ -92,14 +92,14 @@ function MLSDatasetListWidget(O) {
 	}
 
 	function setup_row(row) {
-		//var close_link=$('<span class=remove_button title="Delete dataset"></span>');
+		//var close_link=$('<span class="remove_button octicon octicon-trashcan" title="Delete dataset"></span>');
 		//close_link.click(function() {remove_dataset(row.dataset_id);});
 		//row.cell(0).append(close_link);
 		//var checkbox=$('<input type=checkbox class="mls_checkbox" data-dataset-id="'+row.dataset_id+'" />');
       	//row.cell(0).append(checkbox);
       	//checkbox.click(update_row_highlighting);
 
-		var edit_name_link=$('<span class=edit_button title="Edit dataset ID"></span>');
+		var edit_name_link=$('<span class="edit_button octicon octicon-pencil" title="Edit dataset ID"></span>');
 		edit_name_link.click(function(evt) {
 			edit_dataset_id(row.dataset_id);
 			return false; //so that we don't get a click on the row

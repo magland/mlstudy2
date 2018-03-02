@@ -94,7 +94,7 @@ function DocShareDialog(O) {
 
 	function create_user_row(user) {
 		var row=m_user_list.createRow();
-		var remove_button=$('<div class=remove_button></div>');
+		var remove_button=$('<div class="remove_button octicon octicon-trashcan"></div>');
 		remove_button.click(function() {remove_user(user);});
 		row.cell(0).append(remove_button);
 		row.cell(1).html(user.id||'');

@@ -95,7 +95,7 @@ function MLSBatchScriptListWidget(O) {
 	}
 
 	function setup_row(row) {
-		var edit_name_link=$('<span class=edit_button title="Edit script module name"></span>');
+		var edit_name_link=$('<span class="edit_button octicon octicon-pencil" title="Edit script module name"></span>');
 		edit_name_link.click(function(evt) {
 			edit_batch_script_name(row.batch_script_name);
 			return false; //so that we don't get a click on the row

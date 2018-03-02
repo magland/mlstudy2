@@ -22,6 +22,7 @@ var MLTableWidget=require('./mltablewidget.js').MLTableWidget;
 var KBucketClient=require('../mlscore/kbucketclient.js').KBucketClient;
 var MLSBatchScript=require('../mlscore/mlsmanager.js').MLSBatchScript;
 var mlutils=require('../mlscore/mlutils.js');
+var jsutils=require('../mlscore/jsutils/jsutils.js');
 
 function AltMLSBatchScriptResultsWidget(O) {
 	O=O||this;
@@ -147,7 +148,7 @@ function AltMLSBatchScriptResultsWidget(O) {
 	}
 
 	function open_result_object(obj) {
-		jsu_http_post_json(obj.url+'/api/setConfig',{config:JSON.stringify(obj.data)},{},function(tmp) {
+		jsutils.http_post_json(obj.url+'/api/setConfig',{config:JSON.stringify(obj.data)},{},function(tmp) {
 			if (!tmp.success) {
 				alert('Error posting data to '+obj.url+': '+tmp.error);
 				return;
@@ -487,7 +488,7 @@ function PopupDialog(O) {
 
 	var html=require('./altmlsbatchscriptresultswidget.html');
 	var m_div=$(html).find('.PopupDialog').clone();
-	
+
 	var m_is_closed=false;
 
 	m_div.find('.modal-content').resizable({
