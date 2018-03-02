@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
   entry: './src/index.js',
@@ -16,7 +17,17 @@ module.exports = {
             attrs: [':data-src']
           }
         }
+      },
+      {
+        test: /\.css$/,
+        use: [ 'style-loader', 'css-loader' ]
       }
     ]
-  }
+  },
+  optimization: {
+    minimize:false
+  },
+  plugins: [
+    new webpack.IgnorePlugin(/request/),
+  ]
 };

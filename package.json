@@ -8,8 +8,8 @@
   "main": "mlstudyserver.js",
   "scripts": {
     "start": "node mlstudyserver.js",
-    "postinstall": "webpack --mode development",
-    "webpack": "webpack --mode development",
+    "postinstall": "webpack --devtool source-map --mode development",
+    "webpack": "webpack --devtool source-map --mode development",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,7 +23,9 @@
     "express": "4.15.2"
   },
   "devDependencies": {
+    "css-loader": "^0.28.10",
     "html-loader": "^0.5.5",
+    "style-loader": "^0.20.2",
     "webpack": "^4.0.1",
     "webpack-cli": "^2.0.9"
   }
