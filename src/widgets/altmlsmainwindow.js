@@ -399,10 +399,23 @@ function AltMLSHomeView(O) {
 		refresh();
 	}
 
-	function edit_description() {
+	function edit_description_old() {
 		var html=require('./altmlsmainwindow.html');
 		var elmt=$(html).find('#template-EditDescriptionDlg').children().clone();
 		//var elmt=$('#template-EditDescriptionDlg').children().first().clone();
+		$('body').append(elmt);
+		elmt.find('textarea').val(m_mls_manager.study().description());
+		elmt.find('#save_button').click(function() {
+			var descr=elmt.find('textarea').val();
+			m_mls_manager.study().setDescription(descr);
+			elmt.modal('hide');
+		});
+		elmt.modal({show:true,focus:true});
+	}
+
+	function edit_description() {
+		var html=require('./altmlsdatasetwidget.html');
+		var elmt=$(html).find('.EditDescriptionDlg').clone();
 		$('body').append(elmt);
 		elmt.find('textarea').val(m_mls_manager.study().description());
 		elmt.find('#save_button').click(function() {

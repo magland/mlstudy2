@@ -573,7 +573,8 @@ function AltDescriptionWidget(O) {
 	//m_top_bar.find('#edit_button').click(edit_description);
 
 	function edit_description() {
-		var elmt=$('#template-EditDescriptionDlg').children().first().clone();
+		var html=require('./altmlsdatasetwidget.html');
+		var elmt=$(html).find('.EditDescriptionDlg').clone();
 		$('body').append(elmt);
 		elmt.find('textarea').val(description());
 		elmt.find('#save_button').click(function() {
