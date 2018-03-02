@@ -21,6 +21,8 @@ var JSQWidget=require('../mlscore/jsqcore/jsqwidget.js').JSQWidget;
 var MLTableWidget=require('./mltablewidget.js').MLTableWidget;
 var MLMenuBar=require('./mlmenubar.js').MLMenuBar;
 var KBucketClient=require('../mlscore/kbucketclient.js').KBucketClient;
+var KBucketAuthClient=require('../mlscore/kbucketauthclient.js').KBucketAuthClient;
+var KBucketUploadDialog=require('./kbucketuploaddialog.js').KBucketUploadDialog;
 
 function AltMLSDatasetWidget(O) {
 	O=O||this;
@@ -170,7 +172,7 @@ function AltMLSDatasetWidget(O) {
 			}
 			var ds=get_dataset();
 			if (!ds) {
-				alert('ds is null');
+				alert('Dataset is null');
 				return;
 			}
 			ds.setParameters(obj);
@@ -247,6 +249,7 @@ function AltMLSDatasetWidget(O) {
 	}
 	*/
 	function upload_files() {
+
 		var kbucketauth_url=m_manager.kBucketAuthUrl();
 		var kbucket_url=m_manager.kBucketUrl();
 		
@@ -264,6 +267,10 @@ function AltMLSDatasetWidget(O) {
 			dlg.show();
 			dlg.onFinished(function(tmp) {
 				var ds=get_dataset();
+				if (!ds) {
+					alert('Dataset is null');
+					return;
+				}
 				var files=tmp.files||[];
 				for (var i=0; i<files.length; i++) {
 					ds.setFile(files[i].file_name,{prv:files[i].prv});

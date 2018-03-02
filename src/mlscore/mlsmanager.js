@@ -1,5 +1,6 @@
 exports.MLSManager=MLSManager;
 exports.MLSBatchScript=MLSBatchScript;
+exports.MLSDataset=MLSDataset;
 
 var JSQObject=require('./jsqcore/jsqobject.js').JSQObject;
 var LocalStorage=require('./jsutils/localstorage.js').LocalStorage;

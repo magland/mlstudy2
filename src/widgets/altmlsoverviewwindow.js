@@ -4,6 +4,7 @@ exports.AdvancedConfigurationWidget=AdvancedConfigurationWidget;
 
 var JSQWidget=require('../mlscore/jsqcore/jsqwidget.js').JSQWidget;
 var MLTableWidget=require('./mltablewidget.js').MLTableWidget;
+var mlutils=require('../mlscore/mlutils.js');
 
 require('./altmlsoverviewwindow.css');
 
@@ -86,7 +87,7 @@ function AltMLSOverviewWindow(O) {
 	}
 
 	function sign_out() {
-		mlinfo('Not yet implemented','Sign out - not yet implemented');
+		mlutils.mlinfo('Not yet implemented','Sign out - not yet implemented');
 	}
 }
 
@@ -375,7 +376,7 @@ function StudyListWidget(O) {
 	}
 
 	function create_new_study() {
-		mlprompt('Create new study','Enter title of new study:','untitled.mls',function(title0) {
+		mlutils.mlprompt('Create new study','Enter title of new study:','untitled.mls',function(title0) {
 			if (!jsu_ends_with(title0,'.mls')) {
 				title0+='.mls';
 			}
@@ -597,7 +598,7 @@ function ProcessingServerWidget(O) {
 	function set_processing_server() {
 		var config=m_mls_manager.mlsConfig();
 		var server=config.processing_server;
-		mlprompt('Set processing server','Enter processing server ID:',config.processing_server||'',function(server) {
+		mlutils.mlprompt('Set processing server','Enter processing server ID:',config.processing_server||'',function(server) {
 			config.processing_server=server;
 			m_mls_manager.setMLSConfig(config);	
 		});
@@ -640,12 +641,12 @@ function AdvancedConfigurationWidget(O) {
 		}
 		m_mls_manager.setMLSConfig(config);	
 		refresh();
-		mlinfo('Configuration saved.','Configuration saved. You should now reload the page.',function() {
+		mlutils.mlinfo('Configuration saved.','Configuration saved. You should now reload the page.',function() {
 
 		});
 	}
 
 	function generate_kbucket_upload_token() {
-		mlinfo('Not yet implemented.','Not yet implemented');
+		mlutils.mlinfo('Not yet implemented.','Not yet implemented');
 	}
 }

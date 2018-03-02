@@ -1,3 +1,5 @@
+exports.KBucketAuthClient=KBucketAuthClient;
+
 var jsutils=require('./jsutils/jsutils.js');
 
 function KBucketAuthClient() {

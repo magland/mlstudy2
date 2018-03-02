@@ -1,3 +1,6 @@
+exports.mlinfo=mlinfo;
+exports.mlconfirm=mlconfirm;
+exports.mlprompt=mlprompt;
 exports.download_document_content_from_docstor=download_document_content_from_docstor;
 exports.set_document_content_to_docstor=set_document_content_to_docstor;
 exports.download_kbucket_file_from_prv=download_kbucket_file_from_prv;

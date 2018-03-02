@@ -7,3 +7,8 @@
 
 .AltMLSOverviewWindow {
 }
+
+a.disabled {
+	color:gray!important;
+	font-style: italic;
+}

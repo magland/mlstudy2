@@ -10,6 +10,7 @@ var AltMLSScriptWidget=require('./altmlsscriptwidget.js').AltMLSScriptWidget;
 var DocShareDialog=require('./docsharedialog.js').DocShareDialog;
 var BatchJob=require('../mlscore/batchjob.js').BatchJob;
 var MLSBatchScript=require('../mlscore/mlsmanager.js').MLSBatchScript;
+var MLSDataset=require('../mlscore/mlsmanager.js').MLSDataset;
 var AltMLSBatchScriptResultsWidget=require('./altmlsbatchscriptresultswidget.js').AltMLSBatchScriptResultsWidget;
 var MLSBatchScriptJobsWidget=require('./mlsbatchscriptjobswidget.js').MLSBatchScriptJobsWidget;
 var MLPLogWidget=require('./mlplogwidget.js').MLPLogWidget;
@@ -313,7 +314,7 @@ function AltMLSMainWindow(O) {
 
 	function on_save_study_as() {
 		var user=m_mls_manager.user()||m_file_info.owner;
-		mlprompt('Save study as',`Enter title of study (owner will be ${user}):`,m_file_info.title,function(title) {
+		mlutils.mlprompt('Save study as',`Enter title of study (owner will be ${user}):`,m_file_info.title,function(title) {
 			if (!title) return;
 			if (!jsu_ends_with(title,'.mls')) {
 				title+='.mls';
@@ -343,7 +344,7 @@ function AltMLSMainWindow(O) {
 
 	function check_can_close(callback) {
 		if (is_dirty()) {
-			mlconfirm('Proceed without saving?','Are you sure you want to proceed without saving changes?',function(tmp) {
+			mlutils.mlconfirm('Proceed without saving?','Are you sure you want to proceed without saving changes?',function(tmp) {
 				if (tmp) {
 					callback();
 				}
@@ -359,7 +360,7 @@ function AltMLSMainWindow(O) {
 	}
 
 	function sign_out() {
-		mlinfo('Not yet implemented','Sign out - not yet implemented');
+		mlutils.mlinfo('Not yet implemented','Sign out - not yet implemented');
 	}
 
 }
@@ -431,6 +432,7 @@ function AltMLSDatasetsView(O) {
 	O.div().find('#dataset_widget').append(m_dataset_widget.div());
 
 	O.div().find("#add_dataset").click(add_dataset);
+	O.div().find('#delete_selected').click(delete_selected);
 
 	m_dataset_list.onCurrentDatasetChanged(update_current_dataset);
 	JSQ.connect(m_dataset_widget,'download_kbucket_file_from_prv',O,function(sender,args) {
@@ -459,6 +461,26 @@ function AltMLSDatasetsView(O) {
 		m_dataset_widget.setMLSManager(manager);
 		m_dataset_widget.refresh();
 		refresh();
+	}
+
+	function delete_selected() {
+		var ids=m_dataset_list.selectedDatasetIds();
+		if (ids.length===0) {
+			mlutils.mlinfo('No datasets selected','',null);
+			return;
+		}
+		var msg='Are you sure you want to delete these '+ids.length+' datasets?';
+		if (ids.length==1) {
+			msg='Are you sure you want to delete this dataset?';
+		}
+		mlutils.mlconfirm('Delete datasets?',msg,function(ok) {
+			if (ok) {
+				for (var i in ids) {
+					m_mls_manager.study().removeDataset(ids[i]);
+				}
+				refresh();
+			}
+		});
 	}
 
 	function add_dataset() {
@@ -551,14 +573,14 @@ function AltMLSScriptsView(O) {
 	function delete_selected() {
 		var names=m_script_list.selectedBatchScriptNames();
 		if (names.length===0) {
-			mlinfo('No scripts selected','',null);
+			mlutils.mlinfo('No scripts selected','',null);
 			return;
 		}
 		var msg='Are you sure you want to delete these '+names.length+' scripts?';
 		if (names.length==1) {
 			msg='Are you sure you want to delete this script?';
 		}
-		mlconfirm('Delete scripts?',msg,function(ok) {
+		mlutils.mlconfirm('Delete scripts?',msg,function(ok) {
 			if (ok) {
 				for (var i in names) {
 					m_mls_manager.study().removeBatchScript(names[i]);

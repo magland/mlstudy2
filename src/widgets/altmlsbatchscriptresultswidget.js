@@ -485,7 +485,9 @@ function PopupDialog(O) {
 	this.contentDiv=function() {return m_div.find('.modal-body')};
 	this.onResize=function(handler) {JSQ.connect(O,'resized',O,handler);};
 
-	var m_div=$('#template-PopupDialog').find('#myModal').clone();
+	var html=require('./altmlsbatchscriptresultswidget.html');
+	var m_div=$(html).find('.PopupDialog').clone();
+	
 	var m_is_closed=false;
 
 	m_div.find('.modal-content').resizable({
