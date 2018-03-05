@@ -11,6 +11,7 @@ function LariClient() {
 	this.probeProcess=function(job_id,opts,callback) {probeProcess(job_id,opts,callback);};
 	this.cancelProcess=function(job_id,opts,callback) {cancelProcess(job_id,opts,callback);};
 	this.findFile=function(prv,opts,callback) {findFile(prv,opts,callback);};
+	this.getStats=function(opts,callback) {getStats(opts,callback);};
 	this.getFileContent=function(prv,opts,callback) {getFileContent(prv,opts,callback);};
 	this.clearSpecCache=function() {m_spec_cache={};};
 	this.setDirectLariCall=function(func) {m_direct_lari_call=func;};
@@ -83,6 +84,16 @@ function LariClient() {
 
 	function getFileContent(prv,opts,callback) {
 		api_call('get-file-content',{checksum:prv.original_checksum,fcs:prv.original_fcs,size:prv.original_size},{},function(err,resp) {
+			if (err) {
+				callback(err);
+				return;
+			}
+			callback(null,resp);
+		});
+	}
+
+	function getStats(opts,callback) {
+		api_call('get-stats',{},{},function(err,resp) {
 			if (err) {
 				callback(err);
 				return;

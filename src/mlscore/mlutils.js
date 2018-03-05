@@ -59,7 +59,6 @@ function download_document_content_from_docstor(DSC,owner,title,callback) {
     if (user=='[anonymous]') user='[public]';
     if (user!=owner)
     	query.and_shared_with=user;
-    console.log(query);
     DSC.findDocuments(query,function(err,docs) {
         if (err) {
             callback('Problem finding document: '+err);
