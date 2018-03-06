@@ -629,8 +629,10 @@ function ProcessingServerWidget(O) {
 		var config=m_mls_manager.mlsConfig();
 		var server=config.processing_server;
 		mlutils.mlprompt('Set processing server','Enter processing server ID:',config.processing_server||'',function(server) {
-			config.processing_server=server;
-			m_mls_manager.setMLSConfig(config);	
+			if (server) {
+				config.processing_server=server;
+				m_mls_manager.setMLSConfig(config);	
+			}
 		});
 	}
 }
