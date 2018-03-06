@@ -75,6 +75,14 @@ function main(query) {
             var overview_window=null;
             var main_window=null;
 
+            $(window).bind('beforeunload',function() {
+                if (main_window) {
+                    if (main_window.isDirty()) {
+                        return 'Are you sure you want to close this study without saving changes?';
+                    }
+                }
+            });
+
             var storage_method=query.storage||'';
             if (!storage_method) {
                 if (query.owner) storage_method='docstor';

@@ -30,6 +30,7 @@ function AltMLSMainWindow(O) {
 	this.mlsManager=function() {return m_mls_manager;};
 	this.loadFromDocStor=function(owner,title,callback) {loadFromDocStor(owner,title,callback);};
 	this.loadFromFileContent=function(path,content,callback) {loadFromFileContent(path,content,callback);};
+	this.isDirty=function() {return is_dirty();};
 	
 	var m_mls_manager=null;
 	var m_processing_server_widget=new ProcessingServerWidget();
@@ -305,15 +306,15 @@ function AltMLSMainWindow(O) {
 		});
 	}
 
-	function on_save_study() {
+	function on_save_study(callback) {
 		if (!m_file_info.title) {
-			on_save_study_as();
+			on_save_study_as(callback);
 			return;
 		}
-		save_changes();
+		save_changes(callback);
 	}
 
-	function on_save_study_as() {
+	function on_save_study_as(callback) {
 		var user=m_mls_manager.user()||m_file_info.owner;
 		mlutils.mlprompt('Save study as',`Enter title of study (owner will be ${user}):`,m_file_info.title,function(title) {
 			if (!title) return;
@@ -327,6 +328,7 @@ function AltMLSMainWindow(O) {
 					m_file_info=m_old_file_info;
 				}
 				update_document_info();
+				if (callback) callback(err);
 			});
 		});
 	}
@@ -345,9 +347,19 @@ function AltMLSMainWindow(O) {
 
 	function check_can_close(callback) {
 		if (is_dirty()) {
-			mlutils.mlconfirm('Proceed without saving?','Are you sure you want to proceed without saving changes?',function(tmp) {
-				if (tmp) {
+			mlutils.mlyesnocancel('Save changes?','Do you want to save changes before closing this study?',function(tmp) {
+				if (tmp=='yes') {
+					on_save_study(function(err) {
+						if (!err) {
+							callback();
+						}
+					});
+				}
+				else if (tmp=='no') {
 					callback();
+				}
+				else if (tmp=='cancel') {
+					//
 				}
 			});
 		}

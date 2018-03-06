@@ -2,6 +2,7 @@ exports.mlinfo=mlinfo;
 exports.mlalert=mlalert;
 exports.mlconfirm=mlconfirm;
 exports.mlprompt=mlprompt;
+exports.mlyesnocancel=mlyesnocancel;
 exports.download_document_content_from_docstor=download_document_content_from_docstor;
 exports.set_document_content_to_docstor=set_document_content_to_docstor;
 exports.download_kbucket_file_from_prv=download_kbucket_file_from_prv;
@@ -51,6 +52,39 @@ function mlconfirm(title,message,callback) {
 	        callback(result);
 	    }
 	});
+}
+
+function mlyesnocancel(title,message,callback) {
+    bootbox.dialog({
+        title: title,
+        message: message,
+        buttons: {
+            cancel: {
+                label: 'Cancel',
+                className: 'btn-secondary',
+                callback: function() {
+                    callback('cancel');
+                }
+            },
+            no: {
+                label: 'No',
+                className: 'btn-danger',
+                callback: function() {
+                    callback('no');
+                }
+            },
+            yes: {
+                label: 'Yes',
+                className: 'btn-success',
+                callback: function() {
+                    callback('yes');
+                }
+            }
+        },
+        callback: function (result) {
+            callback(result);
+        }
+    });
 }
 
 function download_document_content_from_docstor(DSC,owner,title,callback) {
