@@ -575,6 +575,7 @@ function StudyListWidget(O) {
 
 function ProcessingServerWidget(O) {
 	O=O||this;
+
 	
 	var html=require('./altmlsoverviewwindow.html');
 	JSQWidget(O,$(html).find('.ProcessingServerWidget').clone());
@@ -582,12 +583,40 @@ function ProcessingServerWidget(O) {
 	this.setMLSManager=function(manager) {setMLSManager(manager);};
 	this.refresh=function() {refresh();};
 
+	var m_stats={};
+
 	O.div().find('#set_processing_server').click(set_processing_server);
 
 	function refresh() {
 		var config=m_mls_manager.mlsConfig();
 		var server=config.processing_server;
 		O.div().find('#processing_server_name').html(server);
+		set_info('Loading...');
+		m_stats={};
+		update_stats_display();
+		var lari_client=m_mls_manager.lariClient();
+		lari_client.getStats({},function(err,resp) {
+			if (err) {
+				set_info('Error connecting to processing server: '+err);
+				return;
+			}
+			if (!resp.success) {
+				set_info('Error getting processing server stats: '+resp.error);
+				return;
+			}
+			m_stats=resp;
+			set_info('Connected.');
+			update_stats_display();
+		});
+	}
+
+	function update_stats_display() {
+		O.div().find('#stats').html(JSON.stringify(m_stats));
+	}
+
+	function set_info(info) {
+		O.div().find('#info').empty();
+		O.div().find('#info').append(info);
 	}
 
 	function setMLSManager(manager) {

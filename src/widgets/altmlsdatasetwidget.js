@@ -23,6 +23,7 @@ var MLMenuBar=require('./mlmenubar.js').MLMenuBar;
 var KBucketClient=require('../mlscore/kbucketclient.js').KBucketClient;
 var KBucketAuthClient=require('../mlscore/kbucketauthclient.js').KBucketAuthClient;
 var KBucketUploadDialog=require('./kbucketuploaddialog.js').KBucketUploadDialog;
+var mlutils=require('../mlscore/mlutils.js');
 
 function AltMLSDatasetWidget(O) {
 	O=O||this;
@@ -252,6 +253,12 @@ function AltMLSDatasetWidget(O) {
 	}
 	*/
 	function upload_files() {
+
+		var ds=get_dataset();
+		if (!ds) {
+			mlutils.mlalert('No dataset selected','To upload files, you must first create or select a dataset.');
+			return;
+		}
 
 		var kbucketauth_url=m_manager.kBucketAuthUrl();
 		var kbucket_url=m_manager.kBucketUrl();

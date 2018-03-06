@@ -1,6 +1,8 @@
 exports.mlinfo=mlinfo;
+exports.mlalert=mlalert;
 exports.mlconfirm=mlconfirm;
 exports.mlprompt=mlprompt;
+exports.mlyesnocancel=mlyesnocancel;
 exports.download_document_content_from_docstor=download_document_content_from_docstor;
 exports.set_document_content_to_docstor=set_document_content_to_docstor;
 exports.download_kbucket_file_from_prv=download_kbucket_file_from_prv;
@@ -24,6 +26,14 @@ function mlinfo(title,message,callback) {
 	});
 }
 
+function mlalert(title,message,callback) {
+    bootbox.alert({
+        title:title,
+        message:message,
+        callback:callback
+    });
+}
+
 function mlconfirm(title,message,callback) {
 	bootbox.confirm({
 		title: title,
@@ -44,13 +54,45 @@ function mlconfirm(title,message,callback) {
 	});
 }
 
+function mlyesnocancel(title,message,callback) {
+    bootbox.dialog({
+        title: title,
+        message: message,
+        buttons: {
+            cancel: {
+                label: 'Cancel',
+                className: 'btn-secondary',
+                callback: function() {
+                    callback('cancel');
+                }
+            },
+            no: {
+                label: 'No',
+                className: 'btn-danger',
+                callback: function() {
+                    callback('no');
+                }
+            },
+            yes: {
+                label: 'Yes',
+                className: 'btn-success',
+                callback: function() {
+                    callback('yes');
+                }
+            }
+        },
+        callback: function (result) {
+            callback(result);
+        }
+    });
+}
+
 function download_document_content_from_docstor(DSC,owner,title,callback) {
     var query={owned_by:owner,filter:{"attributes.title":title}};
     var user=DSC.user();
     if (user=='[anonymous]') user='[public]';
     if (user!=owner)
     	query.and_shared_with=user;
-    console.log(query);
     DSC.findDocuments(query,function(err,docs) {
         if (err) {
             callback('Problem finding document: '+err);
