@@ -148,20 +148,19 @@ function AltMLSBatchScriptResultsWidget(O) {
 	}
 
 	function open_result_object(obj) {
-		jsutils.http_post_json(obj.url+'/api/setConfig',{config:JSON.stringify(obj.data)},{},function(tmp) {
+		jsutils.http_post_json(obj.url+'/api/setConfig',{config:JSON.stringify(obj.data)},{},function(err,tmp) {
+			if (err) {
+				alert('Error posting data to '+obj.url+': '+err);
+			}
 			if (!tmp.success) {
 				alert('Error posting data to '+obj.url+': '+tmp.error);
 				return;
 			}
-			if (!tmp.object.success) {
-				alert('Error in request to '+obj.url+': '+tmp.object.error);
-				return;
-			}
-			if (!tmp.object.id) {
+			if (!tmp.id) {
 				alert('Unexpected: Did not receive configuration id.');
 				return;
 			}
-			window.open(obj.url+'?config_id='+tmp.object.id,'_blank');
+			window.open(obj.url+'?config_id='+tmp.id,'_blank');
 		});
 	}
 
