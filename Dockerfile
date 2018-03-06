@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y git vim curl
 RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
 RUN apt-get update && apt-get install -y nodejs
 
+ARG BUILD_DATE=$BUILD_DATE   
 WORKDIR /home
 RUN git clone https://github.com/magland/mlstudy2.git
 WORKDIR /home/mlstudy2
