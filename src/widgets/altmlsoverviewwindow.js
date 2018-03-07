@@ -1,5 +1,4 @@
 exports.AltMLSOverviewWindow=AltMLSOverviewWindow;
-exports.ProcessingServerWidget=ProcessingServerWidget;
 exports.AdvancedConfigurationWidget=AdvancedConfigurationWidget;
 
 var JSQWidget=require('../mlscore/jsqcore/jsqwidget.js').JSQWidget;
