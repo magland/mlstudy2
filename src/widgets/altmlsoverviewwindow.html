@@ -61,12 +61,12 @@
 			        	</nav>
 				</div>
 				<div id=content class="ml-hlayout-item" style="flex:1;">
-					<div class="tab-content" id="myTabContent">
-					  <div class="tab-pane fade show active" id="study_list" role="tabpanel" aria-labelledby="home-tab"></div>
+					<div class="tab-content" id="myTabContent" style="height:100%">
+					  <div class="tab-pane fade show active" id="study_list" role="tabpanel" aria-labelledby="home-tab" style="height:100%"></div>
 
-					  <div class="tab-pane fade" id="processing_server" role="tabpanel" aria-labelledby="home-tab"></div>
+					  <div class="tab-pane fade" id="processing_server" role="tabpanel" aria-labelledby="home-tab" style="height:100%"></div>
 
-					  <div class="tab-pane fade" id="advanced_configuration" role="tabpanel" aria-labelledby="home-tab"></div>
+					  <div class="tab-pane fade" id="advanced_configuration" role="tabpanel" aria-labelledby="home-tab" style="height:100%"></div>
 					</div>
 						
 				</div>
@@ -98,16 +98,6 @@
 			&nbsp;
 			<button type=button class=btn id=upload_study>Upload study</button>
 		</div>
-	</div>
-
-	<div class="ProcessingServerWidget">
-		<p>
-			<button type=button class=btn id=set_processing_server>Set processing server</button>
-		</p>
-		<h2>Processing server: <span id=processing_server_name></span></h2>
-		<p id=info></p>
-		<p id=stats style="color:blue"></p>
-		
 	</div>
 
 	<div class="AdvancedConfigurationWidget">

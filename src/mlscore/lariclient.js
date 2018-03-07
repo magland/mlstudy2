@@ -13,8 +13,10 @@ function LariClient() {
 	this.findFile=function(prv,opts,callback) {findFile(prv,opts,callback);};
 	this.getStats=function(opts,callback) {getStats(opts,callback);};
 	this.getFileContent=function(prv,opts,callback) {getFileContent(prv,opts,callback);};
+	this.getAvailableContainers=function(opts,callback) {getAvailableContainers(opts,callback);};
 	this.clearSpecCache=function() {m_spec_cache={};};
 	this.setDirectLariCall=function(func) {m_direct_lari_call=func;};
+
 
 	var m_lari_server_url='';
 	var m_container_id='';
@@ -99,6 +101,16 @@ function LariClient() {
 				return;
 			}
 			callback(null,resp);
+		});
+	}
+
+	function getAvailableContainers(opts,callback) {
+		api_call('get-available-containers',{},{},function(err,resp) {
+			if (err) {
+				callback(err);
+				return;
+			}
+			callback(null,resp.containers);
 		});
 	}
 
