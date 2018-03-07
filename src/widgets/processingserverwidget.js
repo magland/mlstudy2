@@ -17,7 +17,8 @@ function ProcessingServerWidget(O) {
 	m_select_table.setSelectionMode('single');
 	m_select_table.onCurrentRowChangedByUser(on_current_row_changed);
 
-	O.div().find('#set_processing_server').click(set_processing_server);
+	//O.div().find('#set_processing_server').click(set_processing_server);
+	O.div().find('#refresh_list').click(function() {refresh_available_containers();});
 
 	O.div().find('#table_holder').append(m_select_table.div());
 
@@ -114,6 +115,7 @@ function ProcessingServerWidget(O) {
 		refresh();
 	}
 	
+	/*
 	function set_processing_server() {
 		var config=m_mls_manager.mlsConfig();
 		var server=config.processing_server;
@@ -124,4 +126,5 @@ function ProcessingServerWidget(O) {
 			}
 		});
 	}
+	*/
 }
