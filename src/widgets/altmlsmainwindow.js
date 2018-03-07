@@ -1,7 +1,7 @@
 exports.AltMLSMainWindow=AltMLSMainWindow;
 
 var JSQWidget=require('../mlscore/jsqcore/jsqwidget.js').JSQWidget;
-var ProcessingServerWidget=require('./altmlsoverviewwindow.js').ProcessingServerWidget;
+var ProcessingServerWidget=require('./processingserverwidget.js').ProcessingServerWidget;
 var AdvancedConfigurationWidget=require('./altmlsoverviewwindow.js').AdvancedConfigurationWidget;
 var MLSDatasetListWidget=require('./mlsdatasetlistwidget.js').MLSDatasetListWidget;
 var AltMLSDatasetWidget=require('./altmlsdatasetwidget.js').AltMLSDatasetWidget;

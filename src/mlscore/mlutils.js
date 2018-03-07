@@ -10,32 +10,35 @@ exports.download_kbucket_file_from_prv=download_kbucket_file_from_prv;
 var KBucketClient=require('./kbucketclient.js').KBucketClient;
 
 function mlprompt(title,message,val,callback) {
-	bootbox.prompt({
+	var elmt=bootbox.prompt({
 		title:title,
 		message:message,
 		value:val,
 		callback:callback
 	});
+    hack_adjust_broken_bootbox(elmt);
 }
 
 function mlinfo(title,message,callback) {
-	bootbox.alert({
+	var elmt=bootbox.alert({
 		title:title,
 		message:message,
 		callback:callback
 	});
+    hack_adjust_broken_bootbox(elmt);
 }
 
 function mlalert(title,message,callback) {
-    bootbox.alert({
+    var elmt=bootbox.alert({
         title:title,
         message:message,
         callback:callback
     });
+    hack_adjust_broken_bootbox(elmt);
 }
 
 function mlconfirm(title,message,callback) {
-	bootbox.confirm({
+	var elmt=bootbox.confirm({
 		title: title,
 	    message: message,
 	    buttons: {
@@ -52,10 +55,11 @@ function mlconfirm(title,message,callback) {
 	        callback(result);
 	    }
 	});
+    hack_adjust_broken_bootbox(elmt);
 }
 
 function mlyesnocancel(title,message,callback) {
-    bootbox.dialog({
+    var elmt=bootbox.dialog({
         title: title,
         message: message,
         buttons: {
@@ -85,6 +89,12 @@ function mlyesnocancel(title,message,callback) {
             callback(result);
         }
     });
+    hack_adjust_broken_bootbox(elmt);
+}
+
+function hack_adjust_broken_bootbox(elmt) {
+    var modal_header=elmt.find('.modal-header');
+    modal_header.find('h4').insertBefore(modal_header.find('button'));
 }
 
 function download_document_content_from_docstor(DSC,owner,title,callback) {

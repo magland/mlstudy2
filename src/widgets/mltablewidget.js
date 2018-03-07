@@ -41,6 +41,7 @@ function MLTableWidget(O) {
 	this.currentRow=function() {return m_current_row;};
 	this.setCurrentRow=function(row) {setCurrentRow(row);};
 	this.selectedRows=function() {return selectedRows();};
+	this.onCurrentRowChangedByUser=function(handler) {JSQ.connect(O,'current_row_changed_by_user',O,handler);};
 
 	//var m_table=$('<table class=Table1></table>');
 	var m_table=$('<table class=table></table>'); //moving to bootstrap
@@ -103,7 +104,10 @@ function MLTableWidget(O) {
 		});
 		JSQ.connect(row,'clicked',O,function(sender,evt) {
 			if ((m_selection_mode=='single')||(m_selection_mode=='multiple')) {
-				setCurrentRow(row);
+				if (m_current_row!=row) {
+					setCurrentRow(row);
+					O.emit('current_row_changed_by_user');
+				}
 			}
 		});
 		return row;

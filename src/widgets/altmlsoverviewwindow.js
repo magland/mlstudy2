@@ -1,9 +1,9 @@
 exports.AltMLSOverviewWindow=AltMLSOverviewWindow;
-exports.ProcessingServerWidget=ProcessingServerWidget;
 exports.AdvancedConfigurationWidget=AdvancedConfigurationWidget;
 
 var JSQWidget=require('../mlscore/jsqcore/jsqwidget.js').JSQWidget;
 var MLTableWidget=require('./mltablewidget.js').MLTableWidget;
+var ProcessingServerWidget=require('./processingserverwidget.js').ProcessingServerWidget;
 var mlutils=require('../mlscore/mlutils.js');
 var jsutils=require('../mlscore/jsutils/jsutils.js');
 
@@ -571,68 +571,6 @@ function StudyListWidget(O) {
 
 	update_layout();
 	refresh();
-}
-
-function ProcessingServerWidget(O) {
-	O=O||this;
-
-	
-	var html=require('./altmlsoverviewwindow.html');
-	JSQWidget(O,$(html).find('.ProcessingServerWidget').clone());
-
-	this.setMLSManager=function(manager) {setMLSManager(manager);};
-	this.refresh=function() {refresh();};
-
-	var m_stats={};
-
-	O.div().find('#set_processing_server').click(set_processing_server);
-
-	function refresh() {
-		var config=m_mls_manager.mlsConfig();
-		var server=config.processing_server;
-		O.div().find('#processing_server_name').html(server);
-		set_info('Loading...');
-		m_stats={};
-		update_stats_display();
-		var lari_client=m_mls_manager.lariClient();
-		lari_client.getStats({},function(err,resp) {
-			if (err) {
-				set_info('Error connecting to processing server: '+err);
-				return;
-			}
-			if (!resp.success) {
-				set_info('Error getting processing server stats: '+resp.error);
-				return;
-			}
-			m_stats=resp;
-			set_info('Connected.');
-			update_stats_display();
-		});
-	}
-
-	function update_stats_display() {
-		O.div().find('#stats').html(JSON.stringify(m_stats));
-	}
-
-	function set_info(info) {
-		O.div().find('#info').empty();
-		O.div().find('#info').append(info);
-	}
-
-	function setMLSManager(manager) {
-		m_mls_manager=manager;
-		manager.onConfigChanged(refresh);
-		refresh();
-	}
-	
-	function set_processing_server() {
-		var config=m_mls_manager.mlsConfig();
-		var server=config.processing_server;
-		mlutils.mlprompt('Set processing server','Enter processing server ID:',config.processing_server||'',function(server) {
-			config.processing_server=server;
-			m_mls_manager.setMLSConfig(config);	
-		});
-	}
 }
 
 function AdvancedConfigurationWidget(O) {

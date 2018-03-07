@@ -11,8 +11,8 @@ RUN apt-get update && apt-get install -y nodejs
 
 ARG BUILD_DATE=$BUILD_DATE   
 WORKDIR /home
-RUN git clone https://github.com/magland/mlstudy2.git
 WORKDIR /home/mlstudy2
+ADD / ./
 RUN npm install
 RUN node --use-strict node_modules/webpack-cli/bin/webpack.js --devtool source-map --mode development
 
