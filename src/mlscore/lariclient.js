@@ -94,7 +94,7 @@ function LariClient() {
 		});
 	}
 
-	function getStats(opts,callback) {
+function getStats(opts,callback) {
 		api_call('get-stats',{},{},function(err,resp) {
 			if (err) {
 				callback(err);
@@ -103,6 +103,7 @@ function LariClient() {
 			callback(null,resp);
 		});
 	}
+
 
 	function getAvailableContainers(opts,callback) {
 		api_call('get-available-containers',{},{},function(err,resp) {
