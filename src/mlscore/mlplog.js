@@ -3,6 +3,7 @@ var GLOBAL_LOG=new GlobalLog();
 exports.GLOBAL_LOG=GLOBAL_LOG;
 
 function mlpLog(msg) {
+	msg.labels=msg.labels||{};
 	GLOBAL_LOG.addMessage(msg);
 }
 

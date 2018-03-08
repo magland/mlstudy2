@@ -45,7 +45,7 @@ function ProcessingServerWidget(O) {
 				return;
 			}
 			m_stats=resp;
-			set_info('Connected.');
+			set_info('<span style="color:darkgreen">Connected</span>');
 			update_stats_display();
 		});
 	}

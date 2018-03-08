@@ -374,7 +374,7 @@ function BatchJobManager(O) {
 
   function startBatchJob(batch_script,module_scripts,study_object) {
     var has_error=false;
-    mlpLog({bold:true,text:'Starting batch job...'});
+    mlpLog({bold:true,text:'Starting script...',labels:{script:1}});
     var J=new BatchJob(null,m_lari_client);
     J.setDocStorClient(m_docstor_client);
     J.setBatchScript(batch_script.script());
@@ -387,13 +387,13 @@ function BatchJobManager(O) {
     J.setStudyObject(study_object);
     JSQ.connect(J,'error',O,function(sender,err) {
       has_error=true;
-      mlpLog({error:true,text:'Error in batch job: '+err});
+      mlpLog({error:true,text:'Error in script: '+err,labels:{script:1}});
     });
     JSQ.connect(J,'completed',O,function() {
-      var txt='Batch job completed';
+      var txt='Script completed';
       if (has_error) txt+=' with error.';
       else txt+=' without error.';
-      mlpLog({bold:true,text:txt,error:has_error});
+      mlpLog({bold:true,text:txt,error:has_error,labels:{script:1}});
       for (var i in m_running_jobs) {
         if (m_running_jobs[i]==J) {
           m_running_jobs.splice(i,1);

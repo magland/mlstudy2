@@ -45,6 +45,11 @@ function AltMLSScriptWidget(O) {
 	var m_log_widget=new MLPLogWidget(null,true);
 	var m_script_job_lookup=null;
 
+	m_log_widget.setMessageFilter(function(msg) {
+		if (msg.labels.script) return true;
+		else return false;
+	});
+
 	O.div().find('#results_widget').append(m_results_widget.div());
 	O.div().find('#log_widget').append(m_log_widget.div());
 

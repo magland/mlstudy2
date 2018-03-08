@@ -724,6 +724,10 @@ function MLSOutputView(O) {
 	var m_results_widget=new AltMLSBatchScriptResultsWidget();
 	var m_jobs_widget=new MLSBatchScriptJobsWidget();
 	var m_log_widget=new MLPLogWidget(null,true);
+
+	m_log_widget.setMessageFilter(function(msg) {
+		return true;
+	});
 	
 	O.div().find('#results_widget').append(m_results_widget.div());
 	O.div().find('#jobs_widget').append(m_jobs_widget.div());

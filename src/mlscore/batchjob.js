@@ -1044,6 +1044,7 @@ function ProcessorJob(O,lari_client) {
   var m_output_files={};
 
   function start() {
+    mlpLog({text:'Starting <a href=#>'+m_processor_name+'</a>',color:'lightgreen',labels:{script:1}});
     var LC=lari_client;
     var query={processor_name:m_processor_name};
     if (m_options.package_uri) {
@@ -1216,10 +1217,12 @@ function ProcessorJob(O,lari_client) {
   }
   function report_error(err) {
     console.log ('Error in process '+m_processor_name+': '+err);
+    mlpLog({text:'Error in process '+m_processor_name+': '+err,color:'white',labels:{script:1}});
     m_is_completed=true;
     m_error=err;
   }
   function report_finished() {
+    mlpLog({text:'Finished '+m_processor_name,color:'white',labels:{script:1}});
     m_is_completed=true;
   }
 }
@@ -1235,7 +1238,7 @@ function run_some_code(func) {
     else {
       console.log=function(a) {
         original_console.log (a);
-        mlpLog({text:'CONSOLE: '+a,color:'yellow'});
+        mlpLog({text:'CONSOLE: '+a,color:'yellow',labels:{script:1}});
       }
     }
     var ret=func();

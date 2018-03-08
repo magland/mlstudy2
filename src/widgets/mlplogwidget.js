@@ -26,6 +26,10 @@ function MLPLogWidget(O,alt) {
 	JSQWidget(O);
 	O.div().addClass('MLPLogWidget');
 
+	this.setMessageFilter=function(filter) {m_message_filter=filter;};
+
+	var m_message_filter=function(msg) {return true;};
+
 	O.div().css({height:'100%',width:'100%',overflow:'auto',"background-color": "black"});
 
 	var m_message_table=$('<table></table>');
@@ -42,7 +46,8 @@ function MLPLogWidget(O,alt) {
 	}
 
 	GLOBAL_LOG.onMessage(function(msg) {
-		add_message(msg);
+		if (m_message_filter(msg))
+			add_message(msg);
 	});
 
 	function add_message(msg) {
