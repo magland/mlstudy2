@@ -1,19 +1,31 @@
 <span>
-	<div class="ProcessingServerWidget ml-hlayout">
-		<div class="ml-hlayout-item" style="flex:0 0 250px">
-			<div class="ml-item-content">
-				<button type=button class=btn id=refresh_list>Refresh list</button>
-				<span id=table_holder>
-				</span>
-			</div>
-		</div>
-		<div class="ml-hlayout-item" style="flex:1">
-			<p id=info2></p>
-			<h2>Processing server: <span id=processing_server_name></span></h2>
-			<p id=info></p>
-			<p id=stats style="color:blue"></p>
-		</div>
-		
-		
-	</div>
+    <div class="ProcessingServerWidget ml-hlayout">
+            <div class="ml-hlayout-item" style="flex:0 0 250px">
+                    <div class="ml-item-content">
+                            <button type=button class=btn id=refresh_list>Refresh list</button>
+                            <span id=table_holder>
+                            </span>
+                    </div>
+            </div>
+            <div class="ml-hlayout-item" style="flex:1">
+                    <p id=info2></p>
+                    <h2>Processing server: <span id=processing_server_name></span></h2>
+                    <p id=info></p>
+                    <table id=stats style="color:blue">
+                      <tr>
+                        <th>Information:<br></th><th id="stat-title"></th>
+                      </tr>
+                      <tr>
+                        <td>Free (RAM) Memory<br></td><td id="stat-mem"></td>
+                      </tr>
+                      <tr>
+                        <td>CPU Usage (1 min average)<br></td><td id="stat-cpu1"></td>
+                      </tr>
+                      <tr>
+                        <td>CPU Usage (15 min average)</td><td id="stat-cpu15"></td>
+                      </tr>
+                    </table>
+            </div>
+    </div>
 </span>
+

@@ -67,7 +67,11 @@ function ProcessingServerWidget(O) {
 	}
 
 	function update_stats_display() {
-		O.div().find('#stats').html(JSON.stringify(m_stats));
+        if (m_stats.content) {
+            O.div().find('#stat-mem').html(JSON.stringify(m_stats.content["Free Memory"]));
+            O.div().find('#stat-cpu1').html(JSON.stringify(m_stats.content["CPU Usage (1 min load)"]));
+            O.div().find('#stat-cpu15').html(JSON.stringify(m_stats.content["CPU Usage (1 min load)"]));
+        };
 	}
 
 	function set_info(info) {
