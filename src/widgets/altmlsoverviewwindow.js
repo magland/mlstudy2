@@ -75,9 +75,11 @@ function AltMLSOverviewWindow(O) {
 	}
 
 	JSQ.connect(m_study_list_widget,'open_study',O,'open_study');
+	JSQ.connect(m_study_list_widget,'open_workspace',O,'open_workspace');
 
 	function refresh_study_list_widget() {
 		var study_list_mode=current_study_list_mode();
+		console.log(study_list_mode);
 		if (study_list_mode) {
 			m_study_list_widget.setMode(study_list_mode);	
 		}
@@ -133,6 +135,8 @@ function StudyListWidget(O) {
 
 	O.div().find('#create_new_study').click(create_new_study);
 	O.div().find('#upload_study').click(upload_study);
+	O.div().find('#create_new_workspace').click(create_new_workspace);
+	O.div().find('#upload_workspace').click(upload_workspace);
 
 	O.div().append(m_table.div());
 
@@ -338,14 +342,21 @@ function StudyListWidget(O) {
 		m_docstor_client.removeDocuments(ids,function(err) {
 			if (err) {
 				set_alert('warning','Error removing documents: '+err);
-				refresh();
+				refresh();upload_study
 				return;
 			}
 			refresh();
 		});
 	}
 
-	function upload_study() {
+	function upload_workspace() {
+		upload_study('workspace');
+	}
+
+	function upload_study(mode) {
+		mode=mode||'study';
+		var ext='.mls';
+		if (mode=='workspace') ext='.mlw';
 		var UP=new FileUploader();
 		UP.uploadTextFile({},function(tmp) {
 			if (!tmp.success) {
@@ -358,8 +369,8 @@ function StudyListWidget(O) {
 				return;
 			}
 			var fname=tmp.file_name;
-			if (!jsutils.ends_with(fname,'.mls'))
-				fname+='.mls';
+			if (!jsutils.ends_with(fname,ext))
+				fname+=ext;
 			var opts={
 				owner:m_login_info.user_id,
 				content:JSON.stringify(obj),
@@ -376,12 +387,19 @@ function StudyListWidget(O) {
 		});
 	}
 
-	function create_new_study() {
-		mlutils.mlprompt('Create new study','Enter title of new study:','untitled.mls',function(title0) {
-			if (!jsutils.ends_with(title0,'.mls')) {
-				title0+='.mls';
+	function create_new_workspace() {
+		create_new_study('workspace');
+	}
+
+	function create_new_study(mode) {
+		mode=mode||'study';
+		var ext='.mls';
+		if (mode=='workspace') ext='.mlw';
+		mlutils.mlprompt('Create new '+mode,'Enter title of new '+mode+':','untitled'+ext,function(title0) {
+			if (!jsutils.ends_with(title0,ext)) {
+				title0+=ext;
 			}
-			if (m_mode=='my_studies') {
+			if ((m_mode=='my_studies')||(m_mode=='my_workspaces')) {
 				var opts={
 					owner:m_login_info.user_id,
 					content:'{}',
@@ -415,16 +433,30 @@ function StudyListWidget(O) {
 			set_alert('info','Loading public studies...');
 		else if (mode=='my_studies')
 			set_alert('info','Loading studies...');
-		else if (mode=='shared_with_me')
+		else if (mode=='studies_shared_with_me')
 			set_alert('info','Loading studies...');
+		else if (mode=='public_workspaces')
+			set_alert('info','Loading public workspaces...');
+		else if (mode=='my_workspaces')
+			set_alert('info','Loading workspaces...');
+		else if (mode=='workspaces_shared_with_me')
+			set_alert('info','Loading workspaces...');
+
+		O.div().find('#create_new_study').css({visibility:'hidden'});
+		O.div().find('#upload_study').css({visibility:'hidden'});
+		O.div().find('#create_new_workspace').css({visibility:'hidden'});
+		O.div().find('#upload_workspace').css({visibility:'hidden'});
 
 		if ((mode=='my_studies')||(mode=='on_this_browser')) {
 			O.div().find('#create_new_study').css({visibility:''});
 			O.div().find('#upload_study').css({visibility:''});
 		}
+		else if (mode=='my_workspaces') {
+			O.div().find('#create_new_workspace').css({visibility:''});
+			O.div().find('#upload_workspace').css({visibility:''});
+		}
 		else {
-			O.div().find('#create_new_study').css({visibility:'hidden'});
-			O.div().find('#upload_study').css({visibility:'hidden'});
+			
 		}
 
 		m_studies=[];
@@ -449,10 +481,28 @@ function StudyListWidget(O) {
 				filter:'*.mls'
 			};
 		}
-		else if (mode=='shared_with_me') {
+		else if (mode=='studies_shared_with_me') {
 			obj={
 				shared_with:m_login_info.user_id,
 				filter:'*.mls'
+			};	
+		}
+		else if (mode=='public_workspaces') {
+			obj={
+				shared_with:'[public]',
+				filter:'*.mlw label:public'
+			};
+		}
+		else if (mode=='my_workspaces') {
+			obj={
+				owned_by:m_login_info.user_id,
+				filter:'*.mlw'
+			};
+		}
+		else if (mode=='workspaces_shared_with_me') {
+			obj={
+				shared_with:m_login_info.user_id,
+				filter:'*.mlw'
 			};	
 		}
 		else {
@@ -487,8 +537,14 @@ function StudyListWidget(O) {
 				set_heading('Public studies');
 			else if (mode=='my_studies')
 				set_heading('My studies');
-			else if (mode=='shared_with_me')
-				set_heading('Shared with me');
+			else if (mode=='studies_shared_with_me')
+				set_heading('Studies shared with me');
+			else if (mode=='public_workspaces')
+				set_heading('Public workspaces');
+			else if (mode=='my_workspaces')
+				set_heading('My workspaces');
+			else if (mode=='workspaces_shared_with_me')
+				set_heading('Workspaces shared with me');
 			set_alert(null);
 			update_table();
 		});
@@ -536,7 +592,12 @@ function StudyListWidget(O) {
 
 		var elmt=$('<a href=#>'+(study0.title||'[untitled]')+'</a>');
 		elmt.click(function() {
-			open_study(study0);
+			if (jsutils.ends_with(study0.title,'.mls'))
+				open_study(study0);
+			else if (jsutils.ends_with(study0.title,'.mlw'))
+				open_workspace(study0);
+			else
+				console.error('Unexpected file name extension: '+study0.title);
 		});
 		row.cell(0).append(elmt);
 		row.cell(1).html(study0.owner);
@@ -567,6 +628,10 @@ function StudyListWidget(O) {
 
 	function open_study(study0) {
 		O.emit('open_study',{study:study0});
+	}
+
+	function open_workspace(workspace0) {
+		O.emit('open_workspace',{workspace:workspace0});
 	}
 
 	update_layout();

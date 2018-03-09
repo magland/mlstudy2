@@ -14,6 +14,7 @@ function MLSManager(O) {
 
 	this.setMLSObject=function(X) {m_study.setObject(X);};
   this.study=function() {return m_study;};
+  this.workspace=function() {return m_workspace;};
   this.setLoginInfo=function(info) {m_login_info=JSQ.clone(info); O.emit('login-info-changed');};
   this.loginInfo=function() {return JSQ.clone(m_login_info);};
   this.kBucketAuthUrl=function() {return kBucketAuthUrl();};
@@ -35,7 +36,7 @@ function MLSManager(O) {
 
   var m_lari_client=new LariClient();
   m_lari_client.setContainerId('child');
-  clear(); //creates m_study and m_batch_job_manager
+  clear(); //creates m_study, m_workspace and m_batch_job_manager
 
   var m_login_info={};
   var m_job_manager=null;
@@ -109,6 +110,42 @@ function MLSManager(O) {
     m_batch_job_manager.setLariClient(m_lari_client);
     m_batch_job_manager.setDocStorClient(m_docstor_client);
     m_batch_job_manager.setKBucketUrl(mlsConfig().kbucket_url);
+
+    m_workspace=new MLWorkspace(null);
+  }
+}
+
+function MLWorkspace(O) {
+  O=O||this;
+  JSQObject(O);
+
+  var that=this;
+
+  this.object=function() {return JSQ.clone(m_object);};
+  this.setObject=function(obj) {setObject(obj);};
+
+  this.description=function() {return description();};
+  this.setDescription=function(str) {setDescription(str);};
+
+  var m_object={
+    files:{},
+  };
+
+  function setObject(obj) {
+    if (JSON.stringify(m_object)==JSON.stringify(obj)) return;
+    m_object=JSQ.clone(obj);
+
+    m_object.files=m_object.files||{};
+    O.emit('changed');
+  }
+
+  function description() {
+    return m_object.description||'';
+  }
+  function setDescription(str) {
+    if (m_object.description==str) return;
+    m_object.description=str;
+    O.emit('changed');
   }
 }
 

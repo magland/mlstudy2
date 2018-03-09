@@ -6,6 +6,7 @@ var jsutils=require('./mlscore/jsutils/jsutils.js');
 var Authenticate=require('./authenticate.js').Authenticate;
 var AltMLSOverviewWindow=require('./widgets/altmlsoverviewwindow.js').AltMLSOverviewWindow;
 var AltMLSMainWindow=require('./widgets/altmlsmainwindow.js').AltMLSMainWindow;
+var MLWorkspaceMainWindow=require('./widgets/mlworkspacemainwindow.js').MLWorkspaceMainWindow;
 
 $(document).ready(function() {
   var query=parse_url_params();
@@ -78,7 +79,7 @@ function main(query) {
             $(window).bind('beforeunload',function() {
                 if (main_window) {
                     if (main_window.isDirty()) {
-                        return 'Are you sure you want to close this study without saving changes?';
+                        return 'Are you sure you want to close without saving changes?';
                     }
                 }
             });
@@ -93,7 +94,14 @@ function main(query) {
                         show_status('warning','Error logging in to docstor: '+err1);
                         return;       
                     }
-                    open_study({storage:'docstor',owner:query.owner,title:query.title});
+                    if (jsutils.ends_with(query.title,'.mls'))
+                    	open_study({storage:'docstor',owner:query.owner,title:query.title});
+                    else if (jsutils.ends_with(query.title,'.mlw'))
+                    	open_workspace({storage:'docstor',owner:query.owner,title:query.title});
+                    else {
+                    	show_status('warning','Unexpected file extension: '+query.title);
+                        return;       	
+                    }
                 });
             }
             else {
@@ -125,12 +133,18 @@ function main(query) {
                 JSQ.connect(overview_window,'open_study',null,function(sender,args) {
                     open_study(args.study);
                 });
+                JSQ.connect(overview_window,'open_workspace',null,function(sender,args) {
+                    open_workspace(args.workspace);
+                });
                 reset_url();
             }
 
-            function create_new_main_window() {
+            function create_new_main_window(window_type) {
                 remove_overview_and_main_windows();
-                main_window=new AltMLSMainWindow(null);
+                if (window_type=='study')
+                	main_window=new AltMLSMainWindow(null);
+                else
+                	main_window=new MLWorkspaceMainWindow(null);
                 main_window.setMLSManager(mls_manager);
                 JSQ.connect(main_window,'log_in',main_window,do_log_in);
                 JSQ.connect(main_window,'goto_overview',null,function() {
@@ -146,7 +160,17 @@ function main(query) {
                     main_window.div().remove();
                     show_status(null);
                     mls_manager.clear();
-                    create_new_main_window();
+                    create_new_main_window('study');
+                    show_status('','');
+                    //main_window.showFullBrowser();
+                    $('body').append(main_window.div());
+                });
+                JSQ.connect(main_window,'new_workspace',null,function() {
+                    //main_window.hide();
+                    main_window.div().remove();
+                    show_status(null);
+                    mls_manager.clear();
+                    create_new_main_window('workspace');
                     show_status('','');
                     //main_window.showFullBrowser();
                     $('body').append(main_window.div());
@@ -201,18 +225,23 @@ function main(query) {
                 });
             }
 
-            function open_study(study0) {
+            function open_workspace(workspace0) {
+            	open_study(workspace0,'workspace');
+            }
+
+            function open_study(study0,mode) {
+            	mode=mode||'study';
                 if (overview_window) {
                 	//overview_window.hide();
                 	overview_window.div().remove();
                 }
-                show_status('info','Opening study...');
+                show_status('info','Opening '+mode+'...');
                 if (!study0.storage) study0.storage='docstor';
 
                 if (study0.storage=='docstor') {
                     mls_manager.clear();
-                    show_status('info','Opening study from docstor...');
-                    create_new_main_window();
+                    show_status('info','Opening '+mode+' from docstor...');
+                    create_new_main_window(mode);
                     main_window.loadFromDocStor(study0.owner,study0.title,function(err) {
                         if (err) {
                             show_status('warning',err);
