@@ -23,14 +23,21 @@ function Authenticate(opts,callback) {
 
     var logindlg=require('./widgets/altmlloginwidget.html');
     var logindlgElement = $(logindlg).find('.ChooseLoginDlg').clone();
+    var loggingIn = false
     $('body').append(logindlgElement)
     $(logindlgElement).find('#google').click(function(){
+        loggingIn = true
         logindlgElement.modal('hide')
         login_via_google()
     })
     $(logindlgElement).find('#passcode').click(function(){
+        loggingIn = true
         logindlgElement.modal('hide')
         login_via_passcode()
+    })
+    logindlgElement.on('hide.bs.modal', function(event) {
+        if (loggingIn) return
+        callback('', {})
     })
     logindlgElement.modal({show:true})
 
