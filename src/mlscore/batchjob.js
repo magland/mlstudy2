@@ -642,7 +642,7 @@ function BatchJob(O,lari_client) {
     }
     var inputs2=JSQ.clone(inputs);
     for (var iname in inputs2) {
-      if (inputs2[iname].prv) {
+      if ((inputs2[iname])&&(inputs2[iname].prv)) {
         //this means it was not generated as an output, so we need to download it if it is not on the server
         var input0=inputs2[iname];
         inputs2[iname]={_mls_pending_output:'download--'+iname+'--'+JSQ.makeRandomId(10)};
