@@ -35,8 +35,11 @@
 					              		Current workspace
 					            	</a>
 					            	<ul class="nav bd-sidenav">
-					            		<li data-content-id="home" class="active bd-sidenav-active">
+					            		<li data-content-id="home_view" class="active bd-sidenav-active">
 							            	<a href="#">Workspace overview</a>
+							            </li>
+							            <li data-content-id="files_view" class="">
+							            	<a href="#">Files</a>
 							            </li>
 							        </ul>
 					    		</div>
@@ -94,7 +97,9 @@
 						</div>
 						<div id=content class="workspace_view ml-vlayout-item" style="flex:1">
 							<div class="tab-content" id="myTabContent" style="height:100%;">
-							  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab" style="height:100%;"></div>
+							  <div class="tab-pane fade show active" id="home_view" role="tabpanel" aria-labelledby="home-tab" style="height:100%;"></div>
+
+							  <div class="tab-pane fade show" id="files_view" role="tabpanel" aria-labelledby="files-tab" style="height:100%;"></div>
 
 							  <div class="tab-pane fade" id="processing_server" role="tabpanel" aria-labelledby="home-tab" style="height:100%;"></div>
 
@@ -113,7 +118,7 @@
 		<div class="ml-vlayout-item" style="flex:0 0 80px">
 			<h3 style="">Workspace: <span id=workspace_title></span></h3>
 		</div>
-		<div class="ml-vlayout-item" style="flex:1">
+		<div class="ml-vlayout-item" style="flex:1 0 0">
 			<div class="ml-hlayout">
 				<div class="ml-hlayout-item" style="flex:0 0 50%">
 					<p>
@@ -126,18 +131,45 @@
 				</div>
 				<div class="ml-hlayout-item" style="flex:0 0 50%">
 					<div class="ml-vlayout">
-						<div class="ml-vlayout-item" style="0 0 30px">
+						<div class="ml-vlayout-item" style="flex:0 0 80px">
 							<button class="btn btn-primary">Spawn Jupyter Container</button>
 						</div>
 						<div class="ml-vlayout-item" style="flex:1">
-							<div class="ml-item-content">
-								<span id=files_table></span>
-							</div>
+							<ul>
+								<li><a href=# id=open_files><span id=num_files></span> files</a></li>
+							</ul>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+
+	<span class="MLWFilesView ml-hlayout" style="">
+		<div class="ml-hlayout-item" style="flex:0 0 200px">
+			<div class="ml-vlayout" style="">
+				<div class="ml-vlayout-item" style="flex:0 0 60px;overflow: visible">
+					<a href=# title="Add new file" id="add_file"><span class="octicon octicon-plus"></span> Add file</a>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<ul class="nav navbar-nav">
+			          <li class="dropdown">
+			            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">... <span class="caret"></span></a>
+			            <ul class="dropdown-menu" style="padding:15px">
+			              <li><nobr><a href="#" id=delete_selected>Delete selected files...</a></nobr></li>
+			            </ul>
+			          </li>
+			        </ul>
+				</div>
+				<div class="ml-vlayout-item" style="flex:1">
+					<span id=file_list>
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="ml-hlayout-item" style="flex:1;">
+			<span id=file_widget>
+			</span>
+		</div>
+	</span>
 
 </span>

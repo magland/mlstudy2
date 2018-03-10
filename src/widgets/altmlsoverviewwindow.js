@@ -79,7 +79,6 @@ function AltMLSOverviewWindow(O) {
 
 	function refresh_study_list_widget() {
 		var study_list_mode=current_study_list_mode();
-		console.log(study_list_mode);
 		if (study_list_mode) {
 			m_study_list_widget.setMode(study_list_mode);	
 		}

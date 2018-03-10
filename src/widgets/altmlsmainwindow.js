@@ -66,14 +66,14 @@ function AltMLSMainWindow(O) {
 	//m_output_view.div().addClass('h-100');
 	O.div().find('#output').append(m_output_view.div());
 
-	O.div().find('#save_changes').click(on_save_study);
+	O.div().find('#save_changes').click(function() {on_save_study();});
 
 	O.div().find('#home_button').click(function() {check_can_close(function() {O.emit('goto_overview');});});
 	O.div().find('#return_to_main_page').click(function() {check_can_close(function() {O.emit('goto_overview');});});
 
 	O.div().find('#new_study').click(on_new_study);
 	O.div().find('#open_study').click(on_open_study);
-	O.div().find('#save_study').click(on_save_study);
+	O.div().find('#save_study').click(function() {on_save_study();});
 	O.div().find('#save_study_as').click(on_save_study_as);
 	O.div().find('#download_study').click(on_download_study);
 	O.div().find('#share_study').click(on_share_study);
@@ -252,6 +252,9 @@ function AltMLSMainWindow(O) {
 		}
 		if ('login' in query) {
 			querystr+='&login='+query.login;
+		}
+		if ('mode' in query) {
+			querystr+='&mode='+query.mode;
 		}
 		if ('alt' in query) {
 			querystr+='&alt='+query.alt;

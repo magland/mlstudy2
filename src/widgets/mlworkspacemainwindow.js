@@ -4,6 +4,7 @@ var JSQWidget=require('../mlscore/jsqcore/jsqwidget.js').JSQWidget;
 var ProcessingServerWidget=require('./processingserverwidget.js').ProcessingServerWidget;
 var AdvancedConfigurationWidget=require('./altmlsoverviewwindow.js').AdvancedConfigurationWidget;
 var DocShareDialog=require('./docsharedialog.js').DocShareDialog;
+var MLTableWidget=require('./mltablewidget.js').MLTableWidget;
 var mlutils=require('../mlscore/mlutils.js');
 var jsutils=require('../mlscore/jsutils/jsutils.js');
 
@@ -26,23 +27,27 @@ function MLWorkspaceMainWindow(O) {
 	var m_processing_server_widget=new ProcessingServerWidget();
 	var m_advanced_configuration_widget=new AdvancedConfigurationWidget();
 	var m_home_view=new MLWHomeView();
+	var m_files_view=new MLWFilesView();
 	var m_file_source=''; //e.g., docstor
 	var m_file_path=''; //when m_file_source=='file_content'
 	var m_file_info={};
 	var m_original_workspace_object={};
 
+	JSQ.connect(m_home_view,'open-files',O,function() {open_content('files');});
+
 	O.div().find('#processing_server').append(m_processing_server_widget.div());
 	O.div().find('#advanced_configuration').append(m_advanced_configuration_widget.div());
-	O.div().find('#home').append(m_home_view.div());
+	O.div().find('#home_view').append(m_home_view.div());
+	O.div().find('#files_view').append(m_files_view.div());
 
-	O.div().find('#save_changes').click(on_save_workspace);
+	O.div().find('#save_changes').click(function() {on_save_workspace();});
 
 	O.div().find('#home_button').click(function() {check_can_close(function() {O.emit('goto_overview');});});
 	O.div().find('#return_to_main_page').click(function() {check_can_close(function() {O.emit('goto_overview');});});
 
 	O.div().find('#new_workspace').click(on_new_workspace);
 	O.div().find('#open_workspace').click(on_open_workspace);
-	O.div().find('#save_workspace').click(on_save_workspace);
+	O.div().find('#save_workspace').click(function() {on_save_workspace();});
 	O.div().find('#save_workspace_as').click(on_save_workspace_as);
 	O.div().find('#download_workspace').click(on_download_workspace);
 	O.div().find('#share_workspace').click(on_share_workspace);
@@ -175,7 +180,8 @@ function MLWorkspaceMainWindow(O) {
 	}
 
 	function set_mlw_object(obj) {
-		m_mls_manager.setMLSObject(obj);
+		console.log('BBB ',obj);
+		m_mls_manager.setMLWObject(obj);
 		//m_scripts_view.setResultsByScript(obj.results_by_script||{});
 	}
 
@@ -215,6 +221,9 @@ function MLWorkspaceMainWindow(O) {
 		if ('login' in query) {
 			querystr+='&login='+query.login;
 		}
+		if ('mode' in query) {
+            querystr+='&mode='+query.mode;
+        }
 		if ('alt' in query) {
 			querystr+='&alt='+query.alt;
 		}
@@ -241,6 +250,7 @@ function MLWorkspaceMainWindow(O) {
 	function setMLSManager(manager) {
 		m_mls_manager=manager; 
 		m_home_view.setMLSManager(manager);
+		m_files_view.setMLSManager(manager);
 		m_processing_server_widget.setMLSManager(manager);
 		m_advanced_configuration_widget.setMLSManager(manager);
 		JSQ.connect(manager.workspace(),'changed',O,update_document_info);
@@ -347,9 +357,12 @@ function MLWHomeView(O) {
 
 	O.div().find('#edit_description').click(edit_description);
 
+	O.div().find('#open_files').click(function() {O.emit('open-files');});
+
 	function refresh() {
 		O.div().find('#workspace_title').html(m_file_info.title);
 		O.div().find('#description_content').html(m_mls_manager.workspace().description());
+		O.div().find('#num_files').html(m_mls_manager.workspace().fileNames().length);
 	}
 
 	function setMLSManager(manager) {
@@ -369,5 +382,196 @@ function MLWHomeView(O) {
 			elmt.modal('hide');
 		});
 		elmt.modal({show:true,focus:true});
+	}
+}
+
+function MLWFilesView(O) {
+	O=O||this;
+	
+	var html=require('./mlworkspacemainwindow.html');
+	JSQWidget(O,$(html).find('.MLWFilesView').clone());
+
+	this.setMLSManager=function(manager) {setMLSManager(manager);};
+	this.refresh=function() {refresh();};
+
+	var m_file_list=new MLWFileListWidget();
+	var m_file_widget=new MLWFileWidget();
+	var m_mls_manager=null;
+
+	O.div().find('#file_list').append(m_file_list.div());
+	O.div().find('#file_widget').append(m_file_widget.div());
+
+	O.div().find("#add_file").click(add_file);
+	O.div().find('#delete_selected').click(delete_selected);
+
+	m_file_list.onCurrentFileChanged(update_current_file);
+
+	function refresh() {
+		m_file_list.refresh();
+		update_current_file();
+	}
+
+	function update_current_file() {
+		//m_dataset_widget.setDatasetId(m_dataset_list.currentDatasetId());
+		//m_dataset_widget.refresh();
+	}
+
+	function setMLSManager(manager) {
+		m_mls_manager=manager;
+		m_file_list.setWorkspace(manager.workspace());
+		m_file_list.refresh();
+		//m_file_widget.setMLSManager(manager);
+		m_file_widget.refresh();
+		refresh();
+	}
+
+	function delete_selected() {
+		var names=m_file_list.selectedFileNames();
+		if (names.length===0) {
+			mlutils.mlinfo('Cannot delete files','No files selected',null);
+			return;
+		}
+		var msg='Are you sure you want to delete these '+names.length+' files?';
+		if (names.length==1) {
+			msg='Are you sure you want to delete this file?';
+		}
+		mlutils.mlconfirm('Delete files?',msg,function(ok) {
+			if (ok) {
+				for (var i in names) {
+					m_mls_manager.workspace().removeFile(names[i]);
+				}
+				refresh();
+			}
+		});
+	}
+
+	function add_file() {
+		var file_name=prompt('File name:');
+		if (!file_name) return;
+		if (m_mls_manager.workspace().file(file_name)) {
+			alert('Error: File with this name already exists.');
+			return;
+		}
+		m_mls_manager.workspace().setFile(file_name,m_mls_manager.workspace().createFile());
+		refresh();
+		m_file_list.setCurrentFileName(file_name);
+	}
+}
+
+function MLWFileListWidget(O) {
+	O=O||this;
+	JSQWidget(O);
+	O.div().addClass('MLWFileListWidget');
+
+	this.setWorkspace=function(workspace) {setWorkspace(workspace);};
+	this.refresh=function() {refresh();};
+	this.selectedFileNames=function() {return selectedFileNames();};
+	this.currentFileName=function() {return currentFileName();};
+	this.setCurrentFileName=function(name) {setCurrentFileName(name);};
+	this.onCurrentFileChanged=function(handler) {onCurrentFileChanged(handler);};
+
+	var m_workspace=null;
+	var m_table=new MLTableWidget();
+	m_table.setParent(O);
+	m_table.setSelectionMode('multiple');
+	m_table.setRowsMoveable(false);
+
+	function refresh() {
+		var current_file_name=currentFileName();
+
+		m_table.clearRows();
+		m_table.setColumnCount(1);
+		m_table.headerRow().cell(0).html('File');
+		if (!m_workspace) return;
+
+		var names=m_workspace.fileNames();
+		for (var i=0; i<names.length; i++) {
+			var row=m_table.createRow();
+			row.file_name=names[i];
+			setup_row(row);
+			m_table.addRow(row);
+		}
+
+		if (current_file_name) {
+			set_current_row_by_file_name(current_file_name);
+		}
+
+		if (!m_table.currentRow()) {
+			if (m_table.rowCount()>0) {
+				m_table.setCurrentRow(m_table.row(0));	
+			}
+		}
+
+	}
+	function setup_row(row) {
+		var edit_name_link=$('<span class="edit_button octicon octicon-pencil" title="Edit file name"></span>');
+		edit_name_link.click(function(evt) {
+			edit_file_name(row.file_name);
+			return false; //so that we don't get a click on the row
+		});
+		row.cell(0).append(edit_name_link);
+		row.cell(0).append($('<span>'+row.file_name+'</span>'));
+	}
+	function selectedFileNames() {
+		return get_selected_file_names_list();
+	}
+
+	function setWorkspace(workspace) {
+		m_workspace=workspace;
+		JSQ.connect(workspace,'changed',O,refresh);
+		refresh();
+	}
+	function get_selected_file_names_list() {
+		var rows=m_table.selectedRows();
+		var ret={};
+		for (var i in rows) {
+			ret[rows[i].file_names]=1;
+		}
+	    return Object.keys(ret);
+	}
+	function setCurrentFileName(name) {
+		set_current_row_by_file_name(name);
+	}
+	function currentFileName() {
+		var row=m_table.currentRow();
+		if (!row) return null;
+		return row.file_name;
+	}
+
+	function onCurrentFileChanged(handler) {
+		JSQ.connect(m_table,'current_row_changed',O,handler);
+	}
+
+	function set_current_row_by_file_name(name) {
+		for (var i=0; i<m_table.rowCount(); i++) {
+			var row=m_table.row(i);
+			if (row.file_name==name) {
+				m_table.setCurrentRow(row);
+				return;
+			}
+		}
+	}
+
+	function edit_file_name(name) {
+		var name2=prompt('New name for file:',name);
+		if (!name2) return;
+		if (name2==name) return;
+		if (m_workspace.file(name2)) {
+			alert('Cannot rename file. A file with this name already exists.');
+			return;
+		}
+		m_workspace.changeFileName(name,name2);
+		refresh();
+	}
+}
+
+function MLWFileWidget(O) {
+	O=O||this;
+	JSQWidget(O);
+
+	this.refresh=function() {refresh();};
+
+	function refresh() {
+		//todo
 	}
 }

@@ -109,6 +109,9 @@ function main(query) {
                 create_new_overview_window();
                 //overview_window.showFullBrowser();
                 $('body').append(overview_window.div());
+                if (query.mode=='devel') {
+                	$('#workspace_stuff').css({visibility:''});
+                }
             }
 
             function remove_overview_and_main_windows() {
@@ -154,6 +157,9 @@ function main(query) {
                     create_new_overview_window();
                     //overview_window.showFullBrowser();
                     $('body').append(overview_window.div());
+                    if (query.mode=='devel') {
+	                	$('#workspace_stuff').css({visibility:''});
+	                }
                 });
                 JSQ.connect(main_window,'new_study',null,function() {
                     //main_window.hide();
@@ -185,6 +191,9 @@ function main(query) {
                 }
                 if ('passcode' in query) {
                     querystr+='&passcode='+query.passcode;
+                }
+                if ('mode' in query) {
+                    querystr+='&mode='+query.mode;
                 }
                 try {
                     history.pushState(null, null, '?'+querystr);

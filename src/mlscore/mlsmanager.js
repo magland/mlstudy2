@@ -13,6 +13,7 @@ function MLSManager(O) {
   JSQObject(O);
 
 	this.setMLSObject=function(X) {m_study.setObject(X);};
+  this.setMLWObject=function(X) {m_workspace.setObject(X);};
   this.study=function() {return m_study;};
   this.workspace=function() {return m_workspace;};
   this.setLoginInfo=function(info) {m_login_info=JSQ.clone(info); O.emit('login-info-changed');};
@@ -127,8 +128,16 @@ function MLWorkspace(O) {
   this.description=function() {return description();};
   this.setDescription=function(str) {setDescription(str);};
 
+  this.fileNames=function() {return fileNames();};
+  this.file=function(name) {return file(name);};
+  this.setFile=function(name,F) {return setFile(name,F);};
+  this.createFile=function() {return new MLWFile();};
+  this.changeFileName=function(name,new_name) {changeFileName(name,new_name);};
+  this.removeFile=function(name) {removeFile(name);};
+
   var m_object={
-    files:{},
+    description:'',
+    files:{}
   };
 
   function setObject(obj) {
@@ -142,12 +151,57 @@ function MLWorkspace(O) {
   function description() {
     return m_object.description||'';
   }
+
   function setDescription(str) {
     if (m_object.description==str) return;
     m_object.description=str;
     O.emit('changed');
   }
+
+  function fileNames() {
+    var files=m_object.files||{};
+    return Object.keys(files);
+  }
+
+  function file(name) {
+    var files=m_object.files||{};
+    if (!(name in files))
+      return null;
+    var F=new MLWFile();
+    F.setObject(files[name]);
+    return F;
+  }
+  function setFile(name,F) {
+    m_object.files=m_object.files||{};
+    m_object.files[name]=F.object();
+    O.emit('changed');
+  }
+  function changeFileName(name,name_new) {
+    if (name==name_new) return;
+    var X=file(name);
+    if (!X) return;
+    removeFile(name);
+    setFile(name_new,X); 
+  }
+  function removeFile(name) {
+    if (name in (m_object.files||{})) {
+      delete m_object.files[name];
+      O.emit('changed');
+    }
+  }
 }
+
+function MLWFile() {
+  var that=this;
+  this.setObject=function(obj) {m_object=JSQ.clone(obj);};
+  this.object=function() {return JSQ.clone(m_object);};
+  this.content=function() {return m_object.content||'';};
+  this.setContent=function(content) {m_object.content=content;};
+
+  var m_object={};
+}
+
+
 
 function MLStudy(O) {
   O=O||this;
