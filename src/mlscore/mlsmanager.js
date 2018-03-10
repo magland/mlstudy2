@@ -175,6 +175,7 @@ function MLWorkspace(O) {
     m_object.files=m_object.files||{};
     m_object.files[name]=F.object();
     O.emit('changed');
+    console.log('setFile '+name,m_object);
   }
   function changeFileName(name,name_new) {
     if (name==name_new) return;
@@ -193,12 +194,12 @@ function MLWorkspace(O) {
 
 function MLWFile() {
   var that=this;
-  this.setObject=function(obj) {m_object=JSQ.clone(obj);};
+  this.setObject=function(obj) {m_object=JSQ.clone(obj); m_object.content=m_object.content||'';};
   this.object=function() {return JSQ.clone(m_object);};
   this.content=function() {return m_object.content||'';};
   this.setContent=function(content) {m_object.content=content;};
 
-  var m_object={};
+  var m_object={content:''};
 }
 
 
@@ -353,7 +354,7 @@ function MLSDataset(obj) {
   this.id=function() {return m_object.id||'';};
   this.fileNames=function() {return fileNames();};
   this.file=function(name) {return file(name);};
-  this.setFile=function(name,file0) {return setFile(name,file0);};
+  this.setFile=function(name,file0) {setFile(name,file0);};
   this.removeFile=function(name) {removeFile(name);};
   this.parameters=function() {return JSQ.clone(m_object.parameters||{});};
   this.setParameters=function(params) {m_object.parameters=JSQ.clone(params);};

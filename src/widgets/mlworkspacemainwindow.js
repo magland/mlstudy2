@@ -33,7 +33,7 @@ function MLWorkspaceMainWindow(O) {
 	var m_file_info={};
 	var m_original_workspace_object={};
 
-	JSQ.connect(m_home_view,'open-files',O,function() {open_content('files');});
+	JSQ.connect(m_home_view,'open-files',O,function() {open_content('files_view');});
 
 	O.div().find('#processing_server').append(m_processing_server_widget.div());
 	O.div().find('#advanced_configuration').append(m_advanced_configuration_widget.div());
@@ -81,6 +81,7 @@ function MLWorkspaceMainWindow(O) {
 		O.div().find('#content .tab-pane').removeClass('show active');
 		O.div().find('#content .tab-pane#'+content_id).addClass('show active');
 		m_home_view.refresh(); //todo: only when necessary
+		m_files_view.refresh(); //todo: only when necessary
 	}
 
 	function open_content(content_id) {
@@ -133,11 +134,13 @@ function MLWorkspaceMainWindow(O) {
 
 		if (is_dirty()) {
 			O.div().find('#save_changes').removeAttr('disabled');
+			O.div().find('#spawn_jupyter_container').attr('disabled','disabled');
 			O.div().find('#save_workspace').attr('href','#');
 			O.div().find('#save_workspace').removeClass('disabled');
 		}
 		else {
-			O.div().find('#save_changes').attr('disabled','disabled');	
+			O.div().find('#save_changes').attr('disabled','disabled');
+			O.div().find('#spawn_jupyter_container').removeAttr('disabled');
 			O.div().find('#save_workspace').removeAttr('href');
 			O.div().find('#save_workspace').addClass('disabled');
 		}
@@ -180,7 +183,6 @@ function MLWorkspaceMainWindow(O) {
 	}
 
 	function set_mlw_object(obj) {
-		console.log('BBB ',obj);
 		m_mls_manager.setMLWObject(obj);
 		//m_scripts_view.setResultsByScript(obj.results_by_script||{});
 	}
@@ -405,6 +407,7 @@ function MLWFilesView(O) {
 	O.div().find('#delete_selected').click(delete_selected);
 
 	m_file_list.onCurrentFileChanged(update_current_file);
+	JSQ.connect(m_file_widget,'content_changed',O,on_editor_content_changed);
 
 	function refresh() {
 		m_file_list.refresh();
@@ -412,8 +415,19 @@ function MLWFilesView(O) {
 	}
 
 	function update_current_file() {
+		var name=m_file_list.currentFileName();
+		var F=m_mls_manager.workspace().file(name);
+		if (F) console.log('update_current_file '+name+' '+F.content());
+		m_file_widget.setFileName(name);
+		m_file_widget.setFile(F);
 		//m_dataset_widget.setDatasetId(m_dataset_list.currentDatasetId());
 		//m_dataset_widget.refresh();
+	}
+
+	function on_editor_content_changed() {
+		var name=m_file_widget.fileName();
+		console.log('AAAAAAAAA '+name+' '+m_file_widget.file().content());
+		m_mls_manager.workspace().setFile(name,m_file_widget.file());
 	}
 
 	function setMLSManager(manager) {
@@ -427,6 +441,7 @@ function MLWFilesView(O) {
 
 	function delete_selected() {
 		var names=m_file_list.selectedFileNames();
+		console.log(names);
 		if (names.length===0) {
 			mlutils.mlinfo('Cannot delete files','No files selected',null);
 			return;
@@ -525,7 +540,7 @@ function MLWFileListWidget(O) {
 		var rows=m_table.selectedRows();
 		var ret={};
 		for (var i in rows) {
-			ret[rows[i].file_names]=1;
+			ret[rows[i].file_name]=1;
 		}
 	    return Object.keys(ret);
 	}
@@ -567,11 +582,52 @@ function MLWFileListWidget(O) {
 
 function MLWFileWidget(O) {
 	O=O||this;
-	JSQWidget(O);
+
+	var html=require('./mlworkspacemainwindow.html');
+	JSQWidget(O,$(html).find('.MLWFileWidget').clone());
 
 	this.refresh=function() {refresh();};
+	this.setFile=function(F) {m_file=F; refresh();};
+	this.file=function() {return m_file;};
+	this.setFileName=function(name) {m_file_name=name;};
+	this.fileName=function() {return m_file_name;};
+
+	var m_file=null;
+	var m_file_name='';
+	var m_code_editor=CodeMirror.fromTextArea(O.div().find('textarea.code_editor')[0], {
+    	lineNumbers: true,
+    	mode: "javascript",
+    	lint:true,
+    	gutters: ["CodeMirror-lint-markers"],
+    	extraKeys: {"Alt-F": "findPersistent","F3":"findNext"}
+  	});
+  	m_code_editor.on('change',on_code_editor_changed);
+  	//O.div().append(m_code_editor_div);
+
+  	O.div().find('.CodeMirror').addClass('h-100');
+  	O.div().find('.CodeMirror').css({width:'98%'});
+
+  	function on_code_editor_changed() {
+  		if (m_file) {
+  			m_file.setContent(m_code_editor.getValue());
+  			O.emit('content_changed');
+  		}
+  	}
 
 	function refresh() {
-		//todo
+		console.log('refresh');
+		if (!m_file) {
+			if (m_code_editor.getValue()!='') { //important
+				m_code_editor.setValue('');
+			}
+			m_code_editor.refresh();
+			$(m_code_editor.getWrapperElement()).hide();
+			return;
+		}
+		$(m_code_editor.getWrapperElement()).show();
+		if (m_code_editor.getValue()!=m_file.content()) { //important
+			m_code_editor.setValue(m_file.content());
+		}
+		m_code_editor.refresh();
 	}
 }
