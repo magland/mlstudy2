@@ -175,7 +175,6 @@ function MLWorkspace(O) {
     m_object.files=m_object.files||{};
     m_object.files[name]=F.object();
     O.emit('changed');
-    console.log('setFile '+name,m_object);
   }
   function changeFileName(name,name_new) {
     if (name==name_new) return;

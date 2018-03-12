@@ -31,6 +31,7 @@ function MLWorkspaceMainWindow(O) {
 	var m_file_source=''; //e.g., docstor
 	var m_file_path=''; //when m_file_source=='file_content'
 	var m_file_info={};
+	var m_document_id='';
 	var m_original_workspace_object={};
 
 	JSQ.connect(m_home_view,'open-files',O,function() {open_content('files_view');});
@@ -41,6 +42,7 @@ function MLWorkspaceMainWindow(O) {
 	O.div().find('#files_view').append(m_files_view.div());
 
 	O.div().find('#save_changes').click(function() {on_save_workspace();});
+	O.div().find('#spawn_jupyter_container').click(function() {on_spawn_jupyter_container();});
 
 	O.div().find('#home_button').click(function() {check_can_close(function() {O.emit('goto_overview');});});
 	O.div().find('#return_to_main_page').click(function() {check_can_close(function() {O.emit('goto_overview');});});
@@ -106,7 +108,8 @@ function MLWorkspaceMainWindow(O) {
 	        }
 	        set_mlw_object(obj);
 	        refresh_views();
-	        set_file_info('docstor',{owner:owner,title:title})
+	        set_file_info('docstor',{owner:owner,title:title});
+	        m_document_id=doc_id;
 	        set_original_workspace_object(get_mlw_object());
 	        update_document_info();
 	        callback(null);
@@ -311,6 +314,23 @@ function MLWorkspaceMainWindow(O) {
 		dlg.show();
 	}
 
+	function on_spawn_jupyter_container() {
+		var document_id=m_document_id;
+		if (!document_id) {
+			alert('Unexpected: document_id is null.');
+			return;
+		}
+		m_mls_manager.docStorClient().getAccessToken(document_id,{},function(err,resp) {
+			if (err) {
+				mlutils.mlalert('Unable to spawn jupyter container','Error getting access token for document: '+err);
+				return;
+			}
+			var docstor_url=m_mls_manager.docStorClient().docStorUrl();
+			var url=`${docstor_url}/api/getDocument?id=${document_id}&access_token=${resp.access_token}&include_content=true`;
+			console.log (url);
+		});
+	}
+
 	function check_can_close(callback) {
 		if (is_dirty()) {
 			mlutils.mlyesnocancel('Save changes?','Do you want to save changes before closing this workspace?',function(tmp) {
@@ -417,7 +437,6 @@ function MLWFilesView(O) {
 	function update_current_file() {
 		var name=m_file_list.currentFileName();
 		var F=m_mls_manager.workspace().file(name);
-		if (F) console.log('update_current_file '+name+' '+F.content());
 		m_file_widget.setFileName(name);
 		m_file_widget.setFile(F);
 		//m_dataset_widget.setDatasetId(m_dataset_list.currentDatasetId());
@@ -426,7 +445,6 @@ function MLWFilesView(O) {
 
 	function on_editor_content_changed() {
 		var name=m_file_widget.fileName();
-		console.log('AAAAAAAAA '+name+' '+m_file_widget.file().content());
 		m_mls_manager.workspace().setFile(name,m_file_widget.file());
 	}
 
@@ -441,7 +459,6 @@ function MLWFilesView(O) {
 
 	function delete_selected() {
 		var names=m_file_list.selectedFileNames();
-		console.log(names);
 		if (names.length===0) {
 			mlutils.mlinfo('Cannot delete files','No files selected',null);
 			return;
@@ -615,7 +632,6 @@ function MLWFileWidget(O) {
   	}
 
 	function refresh() {
-		console.log('refresh');
 		if (!m_file) {
 			if (m_code_editor.getValue()!='') { //important
 				m_code_editor.setValue('');

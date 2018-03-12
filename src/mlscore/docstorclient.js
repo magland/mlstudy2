@@ -23,6 +23,7 @@ function DocStorClient() {
 	this.login=function(info,callback) {login(info,callback);};
 	this.user=function() {return m_user;};
 	this.setDocStorUrl=function(url) {m_docstor_url=url;};
+	this.docStorUrl=function() {return m_docstor_url;};
 	this.findDocuments=function(opts,callback) {findDocuments(opts,callback);};
 	this.createDocument=function(opts,callback) {createDocument(opts,callback);};
 	this.getDocument=function(id,opts,callback) {getDocument(id,opts,callback);};
@@ -31,11 +32,13 @@ function DocStorClient() {
 	this.setAccessRules=function(rules,callback) {setAccessRules(rules,callback);};
 	this.removeDocument=function(id,callback) {removeDocument(id,callback);};
 	this.removeDocuments=function(ids,callback) {removeDocuments(ids,callback);};
+	this.getAccessToken=function(id,opts,callback) {getAccessToken(id,opts,callback);};
 	this.requestPrvUploadCredentials=function(id,callback) {requestPrvUploadCredentials(id,callback);};
 	this.requestPrvDownloadCredentials=function(id,callback) {requestPrvDownloadCredentials(id,callback);};
 	this.findPrvContent=function(id,callback) {findPrvContent(id,callback);};
 	this.reportSuccessfulUpload=function(data,callback) {reportSuccessfulUpload(data,callback);};
 	this.reportSuccessfulDownload=function(data,callback) {reportSuccessfulDownload(data,callback);};
+
 
 	var m_docstor_url='';
 	var m_authorization_header='';
@@ -142,6 +145,8 @@ function DocStorClient() {
 			opts2.permissions=JSON.stringify(opts.permissions);
 		if ('content' in opts)
 			opts2.content=opts.content;
+		if ('access_token' in opts)
+			opts2.access_token=opts.access_token;
 		api_call('setDocument',opts2,function(err,resp) {
 			if (err) {
 				callback(err);
@@ -151,8 +156,12 @@ function DocStorClient() {
 		});
 	}
 	function getDocument(id,opts,callback) {
-		var opts={id:id,include_content:opts.include_content};
-		api_call('getDocument',opts,function(err,resp) {
+		var opts2={id:id};
+		if ('include_content' in opts)
+			opts2.include_content=opts.include_content;
+		if ('access_token' in opts)
+			opts2.access_token=opts.access_token;
+		api_call('getDocument',opts2,function(err,resp) {
 			if (err) {
 				callback(err,null);
 				return;
@@ -177,6 +186,16 @@ function DocStorClient() {
 			}
 			callback(null);
 		});
+	}
+
+	function getAccessToken(id,opts,callback) {
+		api_call('getAccessToken',{id:id},function(err,resp) {
+			if (err) {
+				callback(err);
+				return;
+			}
+			callback(null,resp);
+		});	
 	}
 
 	function requestPrvUploadCredentials(id,callback) {
