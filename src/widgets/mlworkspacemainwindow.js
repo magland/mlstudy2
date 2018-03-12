@@ -606,7 +606,7 @@ function MLWFileWidget(O) {
 	this.refresh=function() {refresh();};
 	this.setFile=function(F) {m_file=F; refresh();};
 	this.file=function() {return m_file;};
-	this.setFileName=function(name) {m_file_name=name;};
+	this.setFileName=function(name) {setFileName(name);};
 	this.fileName=function() {return m_file_name;};
 
 	var m_file=null;
@@ -645,5 +645,13 @@ function MLWFileWidget(O) {
 			m_code_editor.setValue(m_file.content());
 		}
 		m_code_editor.refresh();
+	}
+	function setFileName(name) {
+		m_file_name=name;
+		var mode='javascript';
+		if (jsutils.ends_with(name||'','.py')) {
+			mode='python';
+		}
+		m_code_editor.setOption('mode',mode);
 	}
 }
