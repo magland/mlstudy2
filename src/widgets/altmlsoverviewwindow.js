@@ -4,6 +4,7 @@ exports.AdvancedConfigurationWidget=AdvancedConfigurationWidget;
 var JSQWidget=require('../mlscore/jsqcore/jsqwidget.js').JSQWidget;
 var MLTableWidget=require('./mltablewidget.js').MLTableWidget;
 var ProcessingServerWidget=require('./processingserverwidget.js').ProcessingServerWidget;
+var FileUploader=require('../mlscore/jsutils/fileuploader.js').FileUploader;
 var mlutils=require('../mlscore/mlutils.js');
 var jsutils=require('../mlscore/jsutils/jsutils.js');
 
@@ -350,6 +351,15 @@ function StudyListWidget(O) {
 
 	function upload_workspace() {
 		upload_study('workspace');
+	}
+
+	function try_parse_json(txt) {
+		try {
+			return JSON.parse(txt);
+		}
+		catch(err) {
+			return null;
+		}
 	}
 
 	function upload_study(mode) {
