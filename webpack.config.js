@@ -28,6 +28,6 @@ module.exports = {
     minimize:false
   },
   plugins: [
-    new webpack.IgnorePlugin(/request/),
+    new webpack.IgnorePlugin(/request/)
   ]
 };

@@ -326,8 +326,14 @@ function MLWorkspaceMainWindow(O) {
 				return;
 			}
 			var docstor_url=m_mls_manager.docStorClient().docStorUrl();
-			var url=`${docstor_url}/api/getDocument?id=${document_id}&access_token=${resp.access_token}&include_content=true`;
-			console.log (url);
+			//var url=`${docstor_url}/api/getDocument?id=${document_id}&access_token=${resp.access_token}&include_content=true`;
+			//console.log (url);
+			var obj={
+				docstor_url:docstor_url,
+				mlw_document_id:document_id,
+				mlw_access_token:resp.access_token
+			};
+			download(JSON.stringify(obj,null,4),(m_file_info.title||'untitled')+'.mlwc');
 		});
 	}
 
