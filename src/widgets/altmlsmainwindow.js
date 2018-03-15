@@ -43,6 +43,7 @@ function AltMLSMainWindow(O) {
 	var m_file_source=''; //e.g., docstor
 	var m_file_path=''; //when m_file_source=='file_content'
 	var m_file_info={};
+	var m_document_id='';
 	var m_original_study_object={};
 
 	JSQ.connect(m_scripts_view,'current-batch-job-changed',O,on_batch_job_changed);
@@ -67,6 +68,7 @@ function AltMLSMainWindow(O) {
 	O.div().find('#output').append(m_output_view.div());
 
 	O.div().find('#save_changes').click(function() {on_save_study();});
+	O.div().find('#open_workspace_in_jupyter_container').click(function() {on_open_workspace_in_jupyter_container();});
 
 	O.div().find('#home_button').click(function() {check_can_close(function() {O.emit('goto_overview');});});
 	O.div().find('#return_to_main_page').click(function() {check_can_close(function() {O.emit('goto_overview');});});
@@ -135,6 +137,7 @@ function AltMLSMainWindow(O) {
 	        set_mls_object(obj);
 	        refresh_views();
 	        set_file_info('docstor',{owner:owner,title:title})
+	        m_document_id=doc_id;
 	        set_original_study_object(get_mls_object());
 	        update_document_info();
 	        callback(null);
@@ -346,6 +349,29 @@ function AltMLSMainWindow(O) {
 		dlg.setDocStorClient(m_mls_manager.docStorClient());
 		dlg.setDocumentInfo(m_file_info);
 		dlg.show();
+	}
+
+	function on_open_workspace_in_jupyter_container() {
+		var document_id=m_document_id;
+		if (!document_id) {
+			alert('Unexpected: document_id is null.');
+			return;
+		}
+		m_mls_manager.docStorClient().getAccessToken(document_id,{},function(err,resp) {
+			if (err) {
+				mlutils.mlalert('Unable to spawn jupyter container','Error getting access token for document: '+err);
+				return;
+			}
+			var docstor_url=m_mls_manager.docStorClient().docStorUrl();
+			//var url=`${docstor_url}/api/getDocument?id=${document_id}&access_token=${resp.access_token}&include_content=true`;
+			//console.log (url);
+			var obj={
+				docstor_url:docstor_url,
+				mlw_document_id:document_id,
+				mlw_access_token:resp.access_token
+			};
+			download(JSON.stringify(obj,null,4),(m_file_info.title||'untitled')+'.mlwc');
+		});
 	}
 
 	function check_can_close(callback) {
