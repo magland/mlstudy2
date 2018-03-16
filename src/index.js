@@ -112,6 +112,9 @@ function main(query) {
                 if (query.mode=='devel') {
                 	$('#workspace_stuff').css({visibility:''});
                 }
+                if (query.mode=='devel') {
+                    $('.devel').css({visibility:''});
+                }
             }
 
             function remove_overview_and_main_windows() {
@@ -160,6 +163,9 @@ function main(query) {
                     if (query.mode=='devel') {
 	                	$('#workspace_stuff').css({visibility:''});
 	                }
+                    if (query.mode=='devel') {
+                        $('.devel').css({visibility:''});
+                    }
                 });
                 JSQ.connect(main_window,'new_study',null,function() {
                     //main_window.hide();
@@ -170,6 +176,9 @@ function main(query) {
                     show_status('','');
                     //main_window.showFullBrowser();
                     $('body').append(main_window.div());
+                    if (query.mode=='devel') {
+                        $('.devel').css({visibility:''});
+                    }
                 });
                 JSQ.connect(main_window,'new_workspace',null,function() {
                     //main_window.hide();
@@ -180,6 +189,9 @@ function main(query) {
                     show_status('','');
                     //main_window.showFullBrowser();
                     $('body').append(main_window.div());
+                    if (query.mode=='devel') {
+                        $('.devel').css({visibility:''});
+                    }
                 });
             }
 
@@ -259,6 +271,9 @@ function main(query) {
                         show_status('','');
                         //main_window.showFullBrowser();
                         $('body').append(main_window.div());
+                        if (query.mode=='devel') {
+                            $('.devel').css({visibility:''});
+                        }
                     });
                 }
                 else {

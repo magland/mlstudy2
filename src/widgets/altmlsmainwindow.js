@@ -370,7 +370,24 @@ function AltMLSMainWindow(O) {
 				mlw_document_id:document_id,
 				mlw_access_token:resp.access_token
 			};
-			download(JSON.stringify(obj,null,4),(m_file_info.title||'untitled')+'.mlwc');
+			//var url0='http://localhost:7044';
+			var url0='http://54.219.253.180';
+			jsutils.http_get_json(url0+'/attachToContainer',{},function(tmp) {
+				if (tmp.success) tmp=tmp.object;
+				if (!tmp.success) {
+					//download(JSON.stringify(obj,null,4),(m_file_info.title||'untitled')+'.mlwc');
+					//console.error(tmp.error);
+					//mlutils.mlalert('Unable to attach to container','Unable to attach to container. You may be able to use the downloaded .mlwc file on your local computer.');
+					console.error(tmp.error);
+					mlutils.mlalert('Unable to attach to container','Unable to attach to container: '+tmp.error);
+					return;
+				}
+				//var url1=`http://localhost:${tmp.port}/lab`;
+				var url1=url0+`:${tmp.port}/lab`;
+				url1+=`?docstor_url=${obj.docstor_url}&mlw_document_id=${obj.mlw_document_id}&mlw_access_token=${obj.mlw_access_token}`;
+				window.open(url1,'_blank');
+				mlutils.mlinfo('Attached to container','A new tab should have opened with JupyterLab access to the workspaces associated with this study. If you make changes and save them back to the workspace, then you should reload this study on this page before saving further changes. Otherwise, you will overwrite your workspace changes.');
+			});
 		});
 	}
 
