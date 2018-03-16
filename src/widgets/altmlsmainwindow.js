@@ -371,7 +371,7 @@ function AltMLSMainWindow(O) {
 				mlw_access_token:resp.access_token
 			};
 			//var url0='http://localhost:7044';
-			var url0='http://54.219.253.180';
+			var url0='https://kbucket.org';
 			jsutils.http_get_json(url0+'/attachToContainer',{},function(tmp) {
 				if (tmp.success) tmp=tmp.object;
 				if (!tmp.success) {
@@ -383,7 +383,7 @@ function AltMLSMainWindow(O) {
 					return;
 				}
 				//var url1=`http://localhost:${tmp.port}/lab`;
-				var url1=url0+`:${tmp.port}/lab`;
+				var url1='http://kbucket.org'+`:${tmp.port}/lab`;
 				url1+=`?docstor_url=${obj.docstor_url}&mlw_document_id=${obj.mlw_document_id}&mlw_access_token=${obj.mlw_access_token}`;
 				window.open(url1,'_blank');
 				mlutils.mlinfo('Attached to container','A new tab should have opened with JupyterLab access to the workspaces associated with this study. If you make changes and save them back to the workspace, then you should reload this study on this page before saving further changes. Otherwise, you will overwrite your workspace changes.');
