@@ -1,4 +1,5 @@
 exports.MLWorkspaceMainWindow=MLWorkspaceMainWindow;
+exports.MLWFilesView=MLWFilesView;
 
 var JSQWidget=require('../mlscore/jsqcore/jsqwidget.js').JSQWidget;
 var ProcessingServerWidget=require('./processingserverwidget.js').ProcessingServerWidget;
@@ -437,6 +438,7 @@ function MLWFilesView(O) {
 
 	function refresh() {
 		m_file_list.refresh();
+		m_file_widget.refresh();
 		update_current_file();
 	}
 

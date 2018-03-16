@@ -14,6 +14,7 @@ var MLSDataset=require('../mlscore/mlsmanager.js').MLSDataset;
 var AltMLSBatchScriptResultsWidget=require('./altmlsbatchscriptresultswidget.js').AltMLSBatchScriptResultsWidget;
 var MLSBatchScriptJobsWidget=require('./mlsbatchscriptjobswidget.js').MLSBatchScriptJobsWidget;
 var MLPLogWidget=require('./mlplogwidget.js').MLPLogWidget;
+var MLWFilesView=require('./mlworkspacemainwindow.js').MLWFilesView;
 var mlutils=require('../mlscore/mlutils.js');
 var jsutils=require('../mlscore/jsutils/jsutils.js');
 
@@ -40,6 +41,7 @@ function AltMLSMainWindow(O) {
 	var m_scripts_view=new AltMLSScriptsView();
 	//var m_web_modules_view=new AltMLSWebModulesView();
 	var m_output_view=new MLSOutputView();
+	var m_files_view=new MLWFilesView();
 	var m_file_source=''; //e.g., docstor
 	var m_file_path=''; //when m_file_source=='file_content'
 	var m_file_info={};
@@ -66,6 +68,7 @@ function AltMLSMainWindow(O) {
 	//O.div().find('#web_modules').append(m_web_modules_view.div());
 	//m_output_view.div().addClass('h-100');
 	O.div().find('#output').append(m_output_view.div());
+	O.div().find('#workspace').append(m_files_view.div());
 
 	O.div().find('#save_changes').click(function() {on_save_study();});
 	O.div().find('#open_workspace_in_jupyter_container').click(function() {on_open_workspace_in_jupyter_container();});
@@ -112,6 +115,7 @@ function AltMLSMainWindow(O) {
 		m_datasets_view.refresh(); //todo: only when necessary
 		m_scripts_view.refresh(); //todo: only when necessary
 		//m_web_modules_view.refresh(); //todo: only when necessary
+		m_files_view.refresh(); //todo: only when necessary
 	}
 
 	function open_content(content_id) {
@@ -222,6 +226,7 @@ function AltMLSMainWindow(O) {
 		m_scripts_view.refresh();
 		//m_web_modules_view.refresh();
 		// m_output_view.refresh(); todo: figure out what to do about this
+		m_files_view.refresh();
 	}
 
 	function try_parse_json(str) {
@@ -293,6 +298,7 @@ function AltMLSMainWindow(O) {
 		m_scripts_view.setMLSManager(manager);
 		//m_web_modules_view.setMLSManager(manager);
 		m_output_view.setMLSManager(manager);
+		m_files_view.setMLSManager(manager);
 		m_processing_server_widget.setMLSManager(manager);
 		m_advanced_configuration_widget.setMLSManager(manager);
 		JSQ.connect(manager.study(),'changed',O,update_document_info);

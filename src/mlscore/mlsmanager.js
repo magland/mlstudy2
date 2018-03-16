@@ -15,7 +15,7 @@ function MLSManager(O) {
 	this.setMLSObject=function(X) {m_study.setObject(X);};
   this.setMLWObject=function(X) {m_workspace.setObject(X);};
   this.study=function() {return m_study;};
-  this.workspace=function() {return m_workspace;};
+  this.workspace=function() {/*return m_workspace;*/ return m_study;};
   this.setLoginInfo=function(info) {m_login_info=JSQ.clone(info); O.emit('login-info-changed');};
   this.loginInfo=function() {return JSQ.clone(m_login_info);};
   this.kBucketAuthUrl=function() {return kBucketAuthUrl();};
@@ -233,10 +233,17 @@ function MLStudy(O) {
   this.removeWebModule=function(name) {removeWebModule(name);};
   this.changeWebModuleName=function(name,new_name) {changeWebModuleName(name,new_name);};
 
+  this.fileNames=function() {return fileNames();};
+  this.file=function(name) {return file(name);};
+  this.setFile=function(name,F) {return setFile(name,F);};
+  this.createFile=function() {return new MLWFile();};
+  this.changeFileName=function(name,new_name) {changeFileName(name,new_name);};
+  this.removeFile=function(name) {removeFile(name);};
+
   var m_object={
     datasets:{},
     scripts:{},
-    web_modules:{}
+    files:{}
   };
 
   function setObject(obj) {
@@ -341,6 +348,38 @@ function MLStudy(O) {
     if (m_object.description==str) return;
     m_object.description=str;
     O.emit('changed');
+  }
+
+  function fileNames() {
+    var files=m_object.files||{};
+    return Object.keys(files);
+  }
+
+  function file(name) {
+    var files=m_object.files||{};
+    if (!(name in files))
+      return null;
+    var F=new MLWFile();
+    F.setObject(files[name]);
+    return F;
+  }
+  function setFile(name,F) {
+    m_object.files=m_object.files||{};
+    m_object.files[name]=F.object();
+    O.emit('changed');
+  }
+  function changeFileName(name,name_new) {
+    if (name==name_new) return;
+    var X=file(name);
+    if (!X) return;
+    removeFile(name);
+    setFile(name_new,X); 
+  }
+  function removeFile(name) {
+    if (name in (m_object.files||{})) {
+      delete m_object.files[name];
+      O.emit('changed');
+    }
   }
 
 }
