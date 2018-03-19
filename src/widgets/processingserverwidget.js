@@ -18,7 +18,7 @@ function ProcessingServerWidget(O) {
 	m_select_table.onCurrentRowChangedByUser(on_current_row_changed);
 
 	//O.div().find('#set_processing_server').click(set_processing_server);
-	O.div().find('#refresh_list').click(function() {refresh_available_containers();});
+	O.div().find('#refresh_list').click(function() {refresh_available_containers(); refresh_stats()});
 
 	O.div().find('#table_holder').append(m_select_table.div());
 
@@ -68,9 +68,16 @@ function ProcessingServerWidget(O) {
 
 	function update_stats_display() {
         if (m_stats.content) {
-            O.div().find('#stat-mem').html(JSON.stringify(m_stats.content["Free Memory"]));
-            O.div().find('#stat-cpu1').html(JSON.stringify(m_stats.content["CPU Usage (1 min load)"]));
-            O.div().find('#stat-cpu15').html(JSON.stringify(m_stats.content["CPU Usage (1 min load)"]));
+            O.div().find('#stat-mem').html(
+                format_file_size(
+                m_stats.content["FreeMemory"].toFixed(3)));
+            O.div().find('#stat-mem-p').html(
+                (100*m_stats.content["FreeMemoryPer"]).toFixed(3));
+            O.div().find('#stat-mem-total').html(
+                format_file_size(
+                m_stats.content["TotalMemory"].toFixed(3)));
+            O.div().find('#stat-cpu1').html(m_stats.content["CPU1"].toFixed(3));
+            O.div().find('#stat-cpu15').html(m_stats.content["CPU15"].toFixed(3));
         };
 	}
 
@@ -131,4 +138,30 @@ function ProcessingServerWidget(O) {
 		});
 	}
 	*/
+}
+function format_file_size(size_bytes) {
+    var a=1024;
+    var aa=a*a;
+    var aaa=a*a*a;
+    if (size_bytes>aaa) {
+      return Math.floor(size_bytes/aaa)+' GB';
+    }
+    else if (size_bytes>aaa) {
+      return Math.floor(size_bytes/(aaa/10))/10+' GB';  
+    }
+    else if (size_bytes>aa) {
+      return Math.floor(size_bytes/aa)+' MB';
+    }
+    else if (size_bytes>aa) {
+      return Math.floor(size_bytes/(aa/10))/10+' MB';  
+    }
+    else if (size_bytes>10*a) {
+      return Math.floor(size_bytes/a)+' KB';
+    }
+    else if (size_bytes>a) {
+      return Math.floor(size_bytes/(a/10))/10+' KB';  
+    }
+    else {
+      return size_bytes+' bytes';
+    }
 }
